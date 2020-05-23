@@ -27,8 +27,8 @@ func main() {
 		//digIPs(IPs, pod)
 	}
 	if *pathToCfg != "" && *podsAllowed == false {
-		//var serviceIPs = GetService(nil, nil, udpPort, client)
-		//digIPs(serviceIPs, nil)
+		//var service = GetService(nil, nil, udpPort, client)
+		//digIPs(service.ExternalIPs, nil)
 	}
 }
 
