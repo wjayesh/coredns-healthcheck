@@ -6,6 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 	mv1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -68,5 +69,16 @@ func GetService(name string, namespace string, port int32,
 // GetPods will return a PodList of the pods served by the service svc
 func GetPods(svc *v1.Service, namespace string,
 	client *kubernetes.Clientset) (*v1.PodList, error) {
-	return nil, nil
+
+	set := labels.Set(svc.Spec.Selector)
+	// preparing a listOptions with the selector from the service
+	listOptions := mv1.ListOptions{LabelSelector: set.AsSelector().String()}
+
+	//using the API to get a PodList that satisfies the selector value
+	pods, err := client.CoreV1().Pods(namespace).List(listOptions)
+	if err == nil {
+		return pods, err
+	} else {
+		return nil, errors.New("No Pods found for service" + svc.Name)
+	}
 }
