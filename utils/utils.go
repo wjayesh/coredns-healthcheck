@@ -29,6 +29,8 @@ func GetClient(pathToCfg string) (*kubernetes.Clientset, error) {
 	return kubernetes.NewForConfig(config)
 }
 
+
+
 // GetService returns the Service with the given parameters
 // If the port is not -1, we look for any service exposing the port
 // to the outside world.
@@ -65,6 +67,8 @@ func GetService(name string, namespace string, port int32,
 		return nil, errors.New("No external services available")
 	}
 }
+
+
 
 // GetPods will return a PodList of the pods served by the service svc
 func GetPods(svc *v1.Service, namespace string,

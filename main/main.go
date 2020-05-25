@@ -9,11 +9,16 @@ import (
 	"github.com/WJayesh/healthCheck/utils"
 )
 
-var namespace string = "kube-dns"
-var svcName string = "kube-dns"
+var (
+	namespace string = "kube-dns"
+	svcName string = "kube-dns"
+)
 
-var pathToCfg = flag.String("path", "", "the path to the kubeconfig file")
-var podsAllowed = flag.Bool("allowPods", false, "allow creation of lightweight pods in cluster")
+var (
+	pathToCfg = flag.String("path", "", "the path to the kubeconfig file")
+	podsAllowed = flag.Bool("allowPods", false, "allow creation of lightweight pods in cluster")
+	udpPort = flag.Int("port", 53, "the udp port for the dns server")
+)
 
 func main() {
 	flag.Parse()
@@ -27,7 +32,7 @@ func main() {
 		//digIPs(IPs, pod)
 	}
 	if *pathToCfg != "" && *podsAllowed == false {
-		//var service = GetService(nil, nil, udpPort, client)
+		var service = utils.GetService(nil, nil, *udpPort, client)
 		//digIPs(service.ExternalIPs, nil)
 	}
 }
@@ -42,6 +47,7 @@ func connectToAPIServer() *kubernetes.Clientset {
 	logrus.Info("Client received: ", client.LegacyPrefix)
 	return client
 }
+
 
 /** findIPs will return a map of IP addresses grouped by Service and Pods
 These IP addresses will be used by the application when it's running inside
