@@ -12,12 +12,15 @@ RUN go mod download
 # Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
+# Go inside the main package
+WORKDIR /app/main/
+
 # Build the Go app
-RUN go build -o main .
+RUN GOOS=linux go build -o main .
 
 
 ######## Start a new stage from scratch #######
-FROM alpine:latest  
+FROM ubuntu:latest  
 
 WORKDIR /root/
 
@@ -25,7 +28,7 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 
 # Execute main when starting container
-ENTRYPOINT ["/app/main"]
+ENTRYPOINT ["./main"]
 
-# Default arguments if none passed 
+#Default arguments if none passed 
 CMD ["-path=""", "-allowPods=false"]
