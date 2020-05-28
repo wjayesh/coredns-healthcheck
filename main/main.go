@@ -11,19 +11,20 @@ import (
 
 var (
 	namespace string = "kube-dns"
-	svcName string = "kube-dns"
+	svcName   string = "kube-dns"
 )
 
 var (
-	pathToCfg = flag.String("path", "", "the path to the kubeconfig file")
+	pathToCfg   = flag.String("path", "", "the path to the kubeconfig file")
 	podsAllowed = flag.Bool("allowPods", false, "allow creation of lightweight pods in cluster")
-	udpPort = flag.Int("port", 53, "the udp port for the dns server")
+	udpPort     = flag.Int("port", 53, "the udp port for the dns server")
 )
 
 func main() {
 	flag.Parse()
 	var client = connectToAPIServer()
-	var IPs = findIPs(client)
+	logrus.Info("Client received: ", client.LegacyPrefix)
+	//var IPs = findIPs(client)
 	if *pathToCfg == "" {
 		//digIPs(IPs, nil)
 	}
@@ -32,7 +33,7 @@ func main() {
 		//digIPs(IPs, pod)
 	}
 	if *pathToCfg != "" && *podsAllowed == false {
-		var service = utils.GetService(nil, nil, *udpPort, client)
+		//var service, err = utils.GetService(nil, nil, *udpPort, client)
 		//digIPs(service.ExternalIPs, nil)
 	}
 }
@@ -47,7 +48,6 @@ func connectToAPIServer() *kubernetes.Clientset {
 	logrus.Info("Client received: ", client.LegacyPrefix)
 	return client
 }
-
 
 /** findIPs will return a map of IP addresses grouped by Service and Pods
 These IP addresses will be used by the application when it's running inside
