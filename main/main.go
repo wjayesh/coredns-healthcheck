@@ -35,8 +35,9 @@ func main() {
 		//var service, err = utils.GetService(nil, nil, *udpPort, client)
 		//digIPs(service.ExternalIPs, nil)
 	}
+	logrus.Info("using the client variable ", client.LegacyPrefix)
 	for {
-		logrus.Info("Client received: ", client.LegacyPrefix)
+		//infinite loop
 	}
 }
 
