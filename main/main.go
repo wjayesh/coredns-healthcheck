@@ -23,7 +23,6 @@ var (
 func main() {
 	flag.Parse()
 	var client = connectToAPIServer()
-	logrus.Info("Client received: ", client.LegacyPrefix)
 	//var IPs = findIPs(client)
 	if *pathToCfg == "" {
 		//digIPs(IPs, nil)
@@ -35,6 +34,9 @@ func main() {
 	if *pathToCfg != "" && *podsAllowed == false {
 		//var service, err = utils.GetService(nil, nil, *udpPort, client)
 		//digIPs(service.ExternalIPs, nil)
+	}
+	for {
+		logrus.Info("Client received: ", client.LegacyPrefix)
 	}
 }
 
