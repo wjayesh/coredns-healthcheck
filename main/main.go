@@ -23,6 +23,9 @@ var (
 func main() {
 	flag.Parse()
 	var client = connectToAPIServer()
+	var IPs = findIPs(client)
+	logrus.Info("Service IP: ", IPs["Service IP"])
+	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
 	//var IPs = findIPs(client)
 	if *pathToCfg == "" {
 		//digIPs(IPs, nil)
