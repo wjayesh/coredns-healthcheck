@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	namespace string = "kube-dns"
+	namespace string = "kube-system"
 	svcName   string = "kube-dns"
 )
 
