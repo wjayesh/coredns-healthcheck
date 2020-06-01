@@ -68,6 +68,7 @@ func findIPs(client *kubernetes.Clientset) map[string][]string {
 
 	var svc, err = utils.GetService(svcName, namespace, -1, client)
 	var groupedIPs map[string][]string
+	groupedIPs = make(map[string][]string)
 	if err == nil {
 		a := make([]string, 1)
 		groupedIPs["Service IP"] = append(a, svc.Spec.ClusterIP)
