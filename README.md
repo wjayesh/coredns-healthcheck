@@ -1,4 +1,6 @@
 # HealthCheck-CoreDNS
+![Docker Image CI](https://github.com/WJayesh/healthCheck/workflows/Docker%20Image%20CI/badge.svg)
+
 Repository to host work done as part of the Community Bridge program under CoreDNS. 
 
 The [Wiki](https://github.com/WJayesh/healthCheck/wiki) section holds a list of milestones achieved to help track the current development status. 
