@@ -26,5 +26,5 @@ This project idea aims to get around limitations on Kubernetes’ health check a
 
 Thus, making the state of CoreDNS available externally and reliably is important to ensure important services run as they are expected to.
 
-
-
+## Deployment
+Information pertaining to deploying this binary on Docker and Kubernetes is provided in the [Deployment.md](https://github.com/WJayesh/healthCheck/blob/master/DEPLOYMENT.md) file. 
