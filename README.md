@@ -1,4 +1,6 @@
 # HealthCheck-CoreDNS
+![Docker Image CI](https://github.com/WJayesh/healthCheck/workflows/Docker%20Image%20CI/badge.svg)
+
 Repository to host work done as part of the Community Bridge program under CoreDNS. 
 
 The [Wiki](https://github.com/WJayesh/healthCheck/wiki) section holds a list of milestones achieved to help track the current development status. 
@@ -24,5 +26,5 @@ This project idea aims to get around limitations on Kubernetes’ health check a
 
 Thus, making the state of CoreDNS available externally and reliably is important to ensure important services run as they are expected to.
 
-
-
+## Deployment
+Information pertaining to deploying this binary on Docker and Kubernetes is provided in the [Deployment.md](https://github.com/WJayesh/healthCheck/blob/master/DEPLOYMENT.md) file. 

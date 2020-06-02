@@ -16,7 +16,7 @@ The `Dockerfile` is present at the root directory and an image is also pushed to
 
 To deploy the application on Docker, use the following command:
 ```python
-docker run wjayesh/health:v1 -path=PATH -allowPods=BOOL -udpPort=PORT
+docker run wjayesh/health:latest -path=PATH -allowPods=BOOL -udpPort=PORT
 ```
 
 ## Kubernetes
