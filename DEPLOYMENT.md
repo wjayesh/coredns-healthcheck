@@ -16,7 +16,7 @@ The `Dockerfile` is present at the root directory and an image is also pushed to
 
 To deploy the application on Docker, use the following command:
 ```python
-docker run wjayesh/health:v1 -path=PATH -allowPods=BOOL -udpPort=PORT
+docker run wjayesh/health:latest -path=PATH -allowPods=BOOL -udpPort=PORT
 ```
 
 ## Kubernetes
@@ -32,10 +32,31 @@ metadata:
 spec:
   containers:
   - name: health-check-container
-    image: wjayesh/health:v1
+    image: wjayesh/health:latest
     args: ["-path=PATH", "-allowPods=BOOL", "-udpPort=PORT"]
   restartPolicy: OnFailure
   ```
   
-  >Keep in mind that you cannot use environment variables like `"$(PORT)"` as identifiers inside the args field. 
+  ### Note 
+  * Keep in mind that you cannot use environment variables like `"$(PORT)"` as identifiers inside the args field. 
   This is because there is no shell being run in the container and your variables won't resolve to their values. 
+  
+  * Make sure your service account has a role that can access the services and pods resources of your cluster. An example ClusterRole with basic privileges is shown below. 
+  ```yml
+  kind: ClusterRole
+  apiVersion: rbac.authorization.k8s.io/v1
+  metadata:
+    namespace: default
+    name: ip-finder
+  rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["services", "pods"]
+    verbs: ["get", "watch", "list"]
+  ```
+  This cluster role can be bound to your default service account in the default namespace as follows:
+  ```
+  kubectl create clusterrolebinding ip-finder-pod \
+  --clusterrole=ip-finder  \
+  --serviceaccount=default:default
+  ```
+  
