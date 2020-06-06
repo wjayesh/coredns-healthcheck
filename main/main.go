@@ -24,18 +24,28 @@ func main() {
 	flag.Parse()
 	var client = connectToAPIServer()
 	var IPs = findIPs(client)
-	logrus.Info("Service IP: ", IPs["Service IP"])
+	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
 	//var IPs = findIPs(client)
 	if *pathToCfg == "" {
 		//digIPs(IPs, nil)
 	}
 	if *pathToCfg != "" && *podsAllowed == true {
-		//createPod()
-		//digIPs(IPs, pod)
+		// createPod()
+		// exit program
 	}
 	if *pathToCfg != "" && *podsAllowed == false {
-		//var service, err = utils.GetService(nil, nil, *udpPort, client)
+		port := int32(*udpPort)
+		var service, err = utils.GetService("", "", port, client)
+		if err != nil {
+			logrus.Error(err)
+		} else {
+			// Convert ExternalIPs (which is a slice of strings) to a map
+			// this is so done that digIPs method can know that these are svc IPs
+			var groupedIPs map[string][]string
+			groupedIPs = make(map[string][]string)
+			IPs["Service IPs"] = append(IPs["Service IPs"], service.Spec.ExternalIPs...)
+		}
 		//digIPs(service.ExternalIPs, nil)
 	}
 	logrus.Info("using the client variable ", client.LegacyPrefix)
@@ -71,7 +81,7 @@ func findIPs(client *kubernetes.Clientset) map[string][]string {
 	groupedIPs = make(map[string][]string)
 	if err == nil {
 		a := make([]string, 1)
-		groupedIPs["Service IP"] = append(a, svc.Spec.ClusterIP)
+		groupedIPs["Service IPs"] = append(a, svc.Spec.ClusterIP)
 	} else {
 		logrus.Error(err)
 	}
@@ -88,4 +98,10 @@ func findIPs(client *kubernetes.Clientset) map[string][]string {
 		}
 	}
 	return groupedIPs
+}
+
+func digIPs(IPs map[string][]string) {
+	if IPs["Pod IPs"] != nil {
+
+	}
 }
