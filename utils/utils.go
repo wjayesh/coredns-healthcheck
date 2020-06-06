@@ -97,3 +97,11 @@ func Dig(ip string) (string, error) {
 	output := string(out)
 	return output, nil
 }
+
+func IsValidOutput(out string) bool {
+
+}
+
+func RestartPod(client *kubernetes.Clientset, ip ...string) {
+
+}
