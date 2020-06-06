@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"os/exec"
 
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
@@ -84,6 +85,15 @@ func GetPods(svc *v1.Service, namespace string,
 }
 
 // Dig calls the q executable with arg ip
-func Dig(ip string) {
-
+// this functionality was not implemented in-line in main because
+// we might change the working later depending on best practices.
+func Dig(ip string) (string, error) {
+	out, err := exec.Command("./q", ip).Output()
+	if err != nil {
+		// the issue is likely to be non ip specific
+		// thus we are not passing ip info with the error
+		return "", err
+	}
+	output := string(out)
+	return output, nil
 }
