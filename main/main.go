@@ -42,11 +42,12 @@ func main() {
 		} else {
 			// Convert ExternalIPs (which is a slice of strings) to a map
 			// this is so done that digIPs method can know that these are svc IPs
-			var groupedIPs map[string][]string
-			groupedIPs = make(map[string][]string)
+			IPs := make(map[string][]string)
+			IPs["Service IPs"] = make([]string, 1)
 			IPs["Service IPs"] = append(IPs["Service IPs"], service.Spec.ExternalIPs...)
+			digIPs(client, IPs)
 		}
-		//digIPs(service.ExternalIPs, nil)
+
 	}
 	logrus.Info("using the client variable ", client.LegacyPrefix)
 	for {
@@ -96,12 +97,48 @@ func findIPs(client *kubernetes.Clientset) map[string][]string {
 		for _, pod := range pods.Items {
 			groupedIPs["Pod IPs"] = append(groupedIPs["Pod IPs"], pod.Status.PodIP)
 		}
+	} else {
+		logrus.Error(err)
 	}
 	return groupedIPs
 }
 
-func digIPs(IPs map[string][]string) {
+func digIPs(client *kubernetes.Clientset, IPs map[string][]string) {
+	// TODO: Instead of if statements, implement labels
 	if IPs["Pod IPs"] != nil {
+		podIPs := IPs["Pod IPs"]
+		for _, ip := range podIPs {
+			out, err := utils.Dig(ip)
+			if err != nil {
+				logrus.Error(err)
+			} else {
+				if !utils.IsValidOutput(out) {
+					logrus.Info("No DNS response from IP Addr: ", ip)
+					logrus.Info("Restarting Pod...")
+					utils.RestartPod(client, ip)
+				} else {
+					logrus.Info("DNS response from IP Addr: ", ip, out)
+				}
+			}
+		}
+	}
 
+	// Now check Service IPs
+	if IPs["Service IPs"] != nil {
+		serviceIPs := IPs["Service IPs"]
+		for _, ip := range serviceIPs {
+			out, err := utils.Dig(ip)
+			if err != nil {
+				logrus.Error(err)
+			} else {
+				if !utils.IsValidOutput(out) {
+					logrus.Info("No DNS response from Service IP Addr: ", ip)
+					logrus.Info("Restarting all service pods...")
+					utils.RestartPod(client, IPs["Pod IPs"]...)
+				} else {
+					logrus.Info("DNS response from Service IP Addr: ", ip, out)
+				}
+			}
+		}
 	}
 }
