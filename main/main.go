@@ -26,9 +26,10 @@ func main() {
 	var IPs = findIPs(client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
-	//var IPs = findIPs(client)
+	// TODO: Check if the number of pod ips in map match the
+	// number of coreDNS pods
 	if *pathToCfg == "" {
-		//digIPs(IPs, nil)
+		digIPs(client, IPs)
 	}
 	if *pathToCfg != "" && *podsAllowed == true {
 		// createPod()
@@ -42,6 +43,7 @@ func main() {
 		} else {
 			// Convert ExternalIPs (which is a slice of strings) to a map
 			// this is so done that digIPs method can know that these are svc IPs
+			logrus.Info("External service discovered: ", service.Name)
 			IPs := make(map[string][]string)
 			IPs["Service IPs"] = make([]string, 1)
 			IPs["Service IPs"] = append(IPs["Service IPs"], service.Spec.ExternalIPs...)
@@ -134,7 +136,7 @@ func digIPs(client *kubernetes.Clientset, IPs map[string][]string) {
 				if !utils.IsValidOutput(out) {
 					logrus.Info("No DNS response from Service IP Addr: ", ip)
 					logrus.Info("Restarting all service pods...")
-					utils.RestartPod(client, IPs["Pod IPs"]...)
+					utils.RestartPod(client, namespace, IPs["Pod IPs"]...)
 				} else {
 					logrus.Info("DNS response from Service IP Addr: ", ip, out)
 				}
