@@ -44,30 +44,31 @@ func GetService(name string, namespace string, port int32,
 		if svc != nil {
 			// no errors
 			return svc, nil
-		} else {
-			return nil, errors.New("In-Cluster service not found")
 		}
-	} else {
-		// find services that expose the given port
-		svcs, err := client.CoreV1().Services(namespace).List(mv1.ListOptions{})
-		if err != nil {
-			logrus.Fatal(err)
-		}
-		for _, svc := range svcs.Items {
-			// search among all services
-			for _, svcPort := range svc.Spec.Ports {
-				// only select services that serve the port and are exposed
-				// to the outside world
-				if svcPort.Port == port && svc.Spec.ExternalIPs != nil {
-					return &svc, nil
-				}
+		return nil, errors.New("In-Cluster service not found")
+	}
+	// find services that expose the given port
+	svcs, err := client.CoreV1().Services(namespace).List(mv1.ListOptions{})
+	if err != nil {
+		logrus.Fatal(err)
+	}
+	for _, svc := range svcs.Items {
+		// search among all services
+		for _, svcPort := range svc.Spec.Ports {
+			// only select services that serve the port and are exposed
+			// to the outside world
+			if svcPort.Port == port && svc.Spec.ExternalIPs != nil {
+				return &svc, nil
 			}
 		}
-		return nil, errors.New("No external services available")
 	}
+	return nil, errors.New("No external services available")
+
 }
 
 // GetPods will return a PodList of the pods served by the service svc
+// Possible package name: pods. so that func call becomes pods.GetByService
+// and pods.GetByIP (which can be used by pods.Restart())
 func GetPods(svc *v1.Service, namespace string,
 	client *kubernetes.Clientset) (*v1.PodList, error) {
 
@@ -79,9 +80,8 @@ func GetPods(svc *v1.Service, namespace string,
 	pods, err := client.CoreV1().Pods(namespace).List(listOptions)
 	if err == nil {
 		return pods, err
-	} else {
-		return nil, errors.New("No Pods found for service" + svc.Name)
 	}
+	return nil, errors.New("No Pods found for service" + svc.Name)
 }
 
 // Dig calls the q executable with arg ip
@@ -98,10 +98,27 @@ func Dig(ip string) (string, error) {
 	return output, nil
 }
 
+// IsValidOutput checks the output string to determine if
+// the output is a valid DNS response
 func IsValidOutput(out string) bool {
-
+	return false
 }
 
-func RestartPod(client *kubernetes.Clientset, ip ...string) {
-
+//RestartPod restarts the coredns pods with matching ips
+// for this purpose, we only need to delete the pods;
+// The deployment controller will create new pods automatically
+func RestartPod(client *kubernetes.Clientset, namespace string, ips ...string) {
+	// Get pods from IPs
+	pods, err := client.CoreV1().Pods(namespace).List(mv1.ListOptions{})
+	if err != nil {
+		logrus.Error("Error listing all pods", err)
+	} else {
+		for _, pod := range pods.Items {
+			for _, ip := range ips {
+				if pod.Status.PodIP == ip {
+					client.CoreV1().Pods(namespace).Delete(pod.Name, &mv1.DeleteOptions{})
+				}
+			}
+		}
+	}
 }
