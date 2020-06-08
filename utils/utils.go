@@ -116,6 +116,7 @@ func RestartPod(client *kubernetes.Clientset, namespace string, ips ...string) {
 		for _, pod := range pods.Items {
 			for _, ip := range ips {
 				if pod.Status.PodIP == ip {
+					logrus.Info("Pod to be deleted: ", pod.Name)
 					client.CoreV1().Pods(namespace).Delete(pod.Name, &mv1.DeleteOptions{})
 				}
 			}
