@@ -51,7 +51,7 @@ spec:
   rules:
   - apiGroups: [""] # "" indicates the core API group
     resources: ["services", "pods"]
-    verbs: ["get", "watch", "list"]
+    verbs: ["get", "watch", "list", "create", "update", "delete"]
   ```
   This cluster role can be bound to your default service account in the default namespace as follows:
   ```
