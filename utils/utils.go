@@ -90,7 +90,7 @@ func GetPods(svc *v1.Service, namespace string,
 func Dig(ip string) (string, error) {
 	cmd := exec.Command("./q", ip)
 	out, err := cmd.CombinedOutput()
-	logrus.Info("Output after executing q: ", out)
+	logrus.Info("Output after executing q: ", string(out))
 	if err != nil {
 		// the issue is likely to be non ip specific
 		// thus we are not passing ip info with the error
