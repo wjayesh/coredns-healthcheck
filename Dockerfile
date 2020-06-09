@@ -31,10 +31,10 @@ FROM ubuntu:latest
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main main
+COPY --from=builder /app/main .
 
 # Copy the pre-built q binary from previous stage
-COPY --from=builder /app/q q
+COPY --from=builder /app/q .
 
 # Execute main when starting container
 ENTRYPOINT ["./main"]
