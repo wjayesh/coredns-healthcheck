@@ -88,7 +88,9 @@ func GetPods(svc *v1.Service, namespace string,
 // this functionality was not implemented in-line in main because
 // we might change the working later depending on best practices.
 func Dig(ip string) (string, error) {
-	out, err := exec.Command("./q", ip).Output()
+	cmd := exec.Command("./q", ip)
+	out, err := cmd.CombinedOutput()
+	logrus.Info("Output after executing q: ", out)
 	if err != nil {
 		// the issue is likely to be non ip specific
 		// thus we are not passing ip info with the error
