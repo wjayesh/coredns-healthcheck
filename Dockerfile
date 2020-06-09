@@ -18,6 +18,12 @@ WORKDIR /app/main/
 # Build the Go app
 RUN GOOS=linux go build -o main .
 
+# Go inside the vendor directory
+WORKDIR /app/vendor/
+
+# Build the q source into executable
+RUN GOOS=linux go build -o q .
+
 
 ######## Start a new stage from scratch #######
 FROM ubuntu:latest  
@@ -25,7 +31,10 @@ FROM ubuntu:latest
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main .
+COPY --from=builder /app/main main
+
+# Copy the pre-built q binary from previous stage
+COPY --from=builder /app/vendor q
 
 # Execute main when starting container
 ENTRYPOINT ["./main"]
