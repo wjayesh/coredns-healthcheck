@@ -88,7 +88,8 @@ func GetPods(svc *v1.Service, namespace string,
 // this functionality was not implemented in-line in main because
 // we might change the working later depending on best practices.
 func Dig(ip string) (string, error) {
-	cmd := exec.Command("./q", ip)
+	// using the k8s service to check DNS availability
+	cmd := exec.Command("./q", "@"+ip, "kubernetes.default.svc.cluster.local")
 	out, err := cmd.CombinedOutput()
 	logrus.Info("Output after executing q: ", string(out))
 	if err != nil {
