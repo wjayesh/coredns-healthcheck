@@ -1,4 +1,4 @@
-package main
+package engine
 
 import (
 	"strconv"
@@ -8,7 +8,9 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-type engine struct {
+// Engine is a structure to hold the details about the deployment mode
+// and the pods to be tested.
+type Engine struct {
 	path        string
 	podsAllowed bool
 	port        int
@@ -17,16 +19,10 @@ type engine struct {
 	client      *kubernetes.Clientset
 }
 
-func (e engine) Init(path string) {
-	var err error
-	e.client, err = health.GetClient(e.path)
-	if e.client == nil {
-		logrus.Error("Client not found: ", err)
-	}
-	logrus.Info("Client received: ", e.client.LegacyPrefix)
-}
-
-func (e engine) SetOptions(prefs map[string]string) {
+// New returns an Engine instance initialized with the
+// supplied preferences
+func New(prefs map[string]string) Engine {
+	var e Engine
 	podsAllowed, err := strconv.ParseBool(prefs["podsAllowed"])
 	if err == nil {
 		e.podsAllowed = podsAllowed
@@ -37,9 +33,22 @@ func (e engine) SetOptions(prefs map[string]string) {
 	}
 	e.svcName = prefs["svcName"]
 	e.namespace = prefs["namespace"]
+	return e
 }
 
-func (e engine) Start() {
+// Init connects the application to the cluster's api-server
+func (e Engine) Init(path string) {
+	var err error
+	e.client, err = health.GetClient(e.path)
+	if e.client == nil {
+		logrus.Error("Client not found: ", err)
+	}
+	logrus.Info("Client received: ", e.client.LegacyPrefix)
+}
+
+// Start runs the health check and checks for failures.
+// It also attempts to fix any terminated pods.
+func (e Engine) Start() {
 	var IPs = health.FindIPs(e.namespace, e.svcName, e.client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
