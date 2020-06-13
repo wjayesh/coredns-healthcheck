@@ -24,11 +24,11 @@ linter:
 	@echo "PASS: golint"
 
 test: covdir linter
-	@go test $(VERBOSE) -coverprofile=.coverage/coverage.out ./pkg/client/*.go
+	@go test $(VERBOSE) -coverprofile=.coverage/coverage.out ./pkg/health/*.go
 
 ctest: covdir linter
 	@richgo version || go get -u github.com/kyoh86/richgo
-	@time richgo test $(VERBOSE) $(TEST) -coverprofile=.coverage/coverage.out ./pkg/client/*.go
+	@time richgo test $(VERBOSE) $(TEST) -coverprofile=.coverage/coverage.out ./pkg/health/*.go
 
 covdir:
 	@echo "Creating .coverage/ directory"
