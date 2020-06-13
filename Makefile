@@ -21,14 +21,17 @@ linter:
 	@echo "Running lint checks"
 	@golint cmd/coredns-hc/*.go
 	@golint pkg/health/*.go
+	@golint pkg/engine/*.go
 	@echo "PASS: golint"
 
 test: covdir linter
 	@go test $(VERBOSE) -coverprofile=.coverage/coverage.out ./pkg/health/*.go
+	@go test $(VERBOSE) -coverprofile=.coverage/coverage.out ./pkg/engine/*.go
 
 ctest: covdir linter
 	@richgo version || go get -u github.com/kyoh86/richgo
 	@time richgo test $(VERBOSE) $(TEST) -coverprofile=.coverage/coverage.out ./pkg/health/*.go
+	@time richgo test $(VERBOSE) $(TEST) -coverprofile=.coverage/coverage.out ./pkg/engine/*.go
 
 covdir:
 	@echo "Creating .coverage/ directory"
@@ -39,7 +42,7 @@ coverage:
 
 docs:
 	@mkdir -p .doc
-	@godoc -html github.com/wjayesh/health-check/pkg/health > .doc/index.html
+	@godoc -html github.com/wjayesh/health-check/pkg/ > .doc/index.html
 	@echo "Run to serve docs:"
 	@echo "    godoc -goroot .doc/ -html -http \":5000\""
 
@@ -51,6 +54,7 @@ clean:
 qtest:
 	@echo "Perform quick tests ..."
 	@go test -v -run TestClient ./pkg/health/*.go
+	@go test -v -run TestClient ./pkg/engine/*.go
 	@#go test -v -run TestParseInfoJsonOutput ./pkg/health/*.go
 
 dep:
