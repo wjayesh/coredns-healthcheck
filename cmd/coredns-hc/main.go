@@ -5,6 +5,8 @@ package main
 
 import (
 	"flag"
+
+	"github.com/WJayesh/health-check/pkg/engine"
 )
 
 var (
@@ -20,14 +22,16 @@ var (
 
 func main() {
 	flag.Parse()
-	var e engine
-	e.Init(*pathToCfg)
 
 	prefs := make(map[string]string)
 	prefs["podsAllowed"] = *podsAllowed
 	prefs["port"] = *udpPort
+	prefs["namespace"] = namespace
+	prefs["svcName"] = svcName
 
-	e.SetOptions(prefs)
+	var e = engine.New(prefs)
+
+	e.Init(*pathToCfg)
 
 	e.Start()
 }
