@@ -6,8 +6,8 @@ import (
 )
 
 var (
-	namespace string = "kube-system"
-	svcName   string = "kube-dns"
+	namespace string
+	svcName   string
 )
 
 // FindIPs will return a map of IP addresses grouped by Service and Pods
@@ -17,7 +17,12 @@ We take both Service IPs and Pod IPs to be pinged because
 there it is possible that there are multiple point of failures.
 On top of that, individual pods can be remedied.
 */
-func FindIPs(client *kubernetes.Clientset) map[string][]string {
+func FindIPs(ns string, sn string,
+	client *kubernetes.Clientset) map[string][]string {
+
+	// Initialize value of global variables.
+	namespace = ns
+	svcName = sn
 
 	// We'll first add the Service IP to the map.
 

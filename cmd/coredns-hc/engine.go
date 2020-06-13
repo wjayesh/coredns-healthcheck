@@ -12,6 +12,8 @@ type engine struct {
 	path        string
 	podsAllowed bool
 	port        int
+	namespace   string
+	svcName     string
 	client      *kubernetes.Clientset
 }
 
@@ -33,11 +35,12 @@ func (e engine) SetOptions(prefs map[string]string) {
 	if err == nil {
 		e.port = port
 	}
-
+	e.svcName = prefs["svcName"]
+	e.namespace = prefs["namespace"]
 }
 
 func (e engine) Start() {
-	var IPs = health.FindIPs(e.client)
+	var IPs = health.FindIPs(e.namespace, e.svcName, e.client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
 	// TODO: Check if the number of pod ips in map match the
