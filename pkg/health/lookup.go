@@ -21,6 +21,8 @@ On top of that, individual pods can be remedied.
 func FindIPs(ns string, sn string,
 	clnt *kubernetes.Clientset) map[string][]string {
 
+	logrus.Info("Client received: ", clnt.LegacyPrefix)
+
 	// Initialize value of global variables.
 	namespace = ns
 	svcName = sn
