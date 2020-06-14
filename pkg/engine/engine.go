@@ -38,19 +38,20 @@ func New(prefs map[string]string) Engine {
 }
 
 // Init connects the application to the cluster's api-server
-func (e Engine) Init(path string) {
+func (e Engine) Init(path string) *kubernetes.Clientset {
 	var err error
 	e.client, err = health.GetClient(e.path)
 	if e.client == nil {
 		logrus.Error("Client not found: ", err)
 	}
 	logrus.Info("Client received: ", e.client.LegacyPrefix)
+	return e.client
 }
 
 // Start runs the health check and checks for failures.
 // It also attempts to fix any terminated pods.
-func (e Engine) Start() {
-	var IPs = health.FindIPs(e.namespace, e.svcName, e.client)
+func (e Engine) Start(client *kubernetes.Clientset) {
+	var IPs = health.FindIPs(e.namespace, e.svcName, client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
 	// TODO: Check if the number of pod ips in map match the

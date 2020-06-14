@@ -30,7 +30,7 @@ func main() {
 
 	var e = engine.New(prefs)
 
-	e.Init(*pathToCfg)
+	var client = e.Init(*pathToCfg)
 
-	e.Start()
+	e.Start(client)
 }
