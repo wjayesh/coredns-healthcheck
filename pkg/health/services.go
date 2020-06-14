@@ -13,6 +13,7 @@ import (
 func GetService(name string, namespace string,
 	client *kubernetes.Clientset) (*v1.Service, error) {
 
+	logrus.Info("Client received: ", client.LegacyPrefix)
 	var svc, err = client.CoreV1().Services(namespace).Get(name, mv1.GetOptions{})
 	if err != nil {
 		// exit
