@@ -57,7 +57,7 @@ func (e Engine) Start(client *kubernetes.Clientset) {
 	// TODO: Check if the number of pod ips in map match the
 	// number of coreDNS pods
 	if e.path == "" {
-		health.DigIPs(e.client, IPs)
+		health.DigIPs(client, IPs)
 	}
 	if e.path != "" && e.podsAllowed == true {
 		// createPod()
@@ -65,7 +65,7 @@ func (e Engine) Start(client *kubernetes.Clientset) {
 	}
 	if e.path != "" && e.podsAllowed == false {
 		udpPort := int32(e.port)
-		var service, err = health.GetServiceByPort(udpPort, e.client)
+		var service, err = health.GetServiceByPort(udpPort, client)
 		if err != nil {
 			logrus.Error(err)
 		} else {
@@ -75,11 +75,11 @@ func (e Engine) Start(client *kubernetes.Clientset) {
 			IPs := make(map[string][]string)
 			IPs["Service IPs"] = make([]string, 1)
 			IPs["Service IPs"] = append(IPs["Service IPs"], service.Spec.ExternalIPs...)
-			health.DigIPs(e.client, IPs)
+			health.DigIPs(client, IPs)
 		}
 
 	}
-	logrus.Info("using the client variable ", e.client.LegacyPrefix)
+	logrus.Info("using the client variable ", client.LegacyPrefix)
 	for {
 		//infinite loop
 	}
