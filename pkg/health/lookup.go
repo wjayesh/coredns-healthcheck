@@ -8,6 +8,7 @@ import (
 var (
 	namespace string
 	svcName   string
+	client    *kubernetes.Clientset
 )
 
 // FindIPs will return a map of IP addresses grouped by Service and Pods
@@ -18,15 +19,16 @@ there it is possible that there are multiple point of failures.
 On top of that, individual pods can be remedied.
 */
 func FindIPs(ns string, sn string,
-	client *kubernetes.Clientset) map[string][]string {
+	clnt *kubernetes.Clientset) map[string][]string {
 
 	// Initialize value of global variables.
 	namespace = ns
 	svcName = sn
+	client = clnt
 
 	// We'll first add the Service IP to the map.
 
-	var svc, err = GetService(svcName, namespace, client)
+	var svc, err = GetService()
 	var groupedIPs map[string][]string
 	groupedIPs = make(map[string][]string)
 	if err == nil {
