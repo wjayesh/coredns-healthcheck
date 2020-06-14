@@ -1,3 +1,5 @@
+// Package health has functions that help with connecting to the api-server, looking up pods and
+// services, performing dns queries on them and fixing failed deployments.
 package health
 
 import (

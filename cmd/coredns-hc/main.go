@@ -1,6 +1,5 @@
 // This is a tool to monitor the health of the coredns deployment and perform automated
 // remedies in case of a failure.
-
 package main
 
 import (

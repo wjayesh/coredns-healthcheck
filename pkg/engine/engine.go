@@ -1,3 +1,4 @@
+// Package engine uses pkg/health to provide a quick way to start a health check
 package engine
 
 import (
@@ -11,12 +12,12 @@ import (
 // Engine is a structure to hold the details about the deployment mode
 // and the pods to be tested.
 type Engine struct {
-	path        string
-	podsAllowed bool
-	port        int
-	namespace   string
-	svcName     string
-	client      *kubernetes.Clientset
+	path        string                // path to the kubeconfig file
+	podsAllowed bool                  // true, if creating pods allowed inside cluster
+	port        int                   // the port of the service to be tested. default: 53
+	namespace   string                // the namespace of the resource
+	svcName     string                // the name of the service
+	client      *kubernetes.Clientset // the clientset
 }
 
 // New returns an Engine instance initialized with the
