@@ -13,13 +13,13 @@ RUN go mod download
 COPY . .
 
 # Go inside the main package
-WORKDIR /app/cmd/coredns-hc/
+WORKDIR /app/cmd/coredns-healthcheck/
 
 # Build the Go app
 RUN GOOS=linux go build -o main .
 
 # Go inside the q directory
-WORKDIR /app/cmd/q/
+WORKDIR /app/cmd/dnsq/
 
 # Build the q source into executable
 RUN GOOS=linux go build -o q .
