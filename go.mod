@@ -1,4 +1,4 @@
-module github.com/WJayesh/health-check
+module github.com/WJayesh/coredns-healthcheck
 
 go 1.14
 

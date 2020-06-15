@@ -4,7 +4,7 @@ package engine
 import (
 	"strconv"
 
-	"github.com/WJayesh/health-check/pkg/health"
+	"github.com/WJayesh/coredns-healthcheck/pkg/health"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
