@@ -88,5 +88,30 @@ spec:
   --clusterrole=ip-finder  \
   --serviceaccount=default:default
   ```
+  ## Milestones ✨
   
+Here I will list the milestones achieved in sync with the tasks done on the project board.  
+
+* Connection to the api-server established on an AKS cluster. 
+
+  ![Cloud Shell logs from the health-check pod](https://user-images.githubusercontent.com/37150991/83383036-ee68f580-a401-11ea-9340-970411d09652.png)
+
+* Service and Pod IPs successfully retrieved.
+
+  ![Logs show the different IPs](https://user-images.githubusercontent.com/37150991/83383009-e6a95100-a401-11ea-810d-a3d3b4c83b98.png)
+
+* Restarting CoreDNS pods through the binary. The logs shows the pods to be deleted. 
+
+  ![The logs show the pods to be deleted](https://user-images.githubusercontent.com/37150991/84131657-7a15fe00-aa62-11ea-8ebd-5410f28ce786.png)
+
+  The condition of invalid output has been harcoded in order to force a restart, for testing purposes. 
+
+  ![We can see that new pods have been created](https://user-images.githubusercontent.com/37150991/84131724-8dc16480-aa62-11ea-85d9-d9fe5117cbad.png)
+  We can see that new pods have been created. 
+
+* Functionality of `dig` replicated using `miekg/exdns/q` inside the health-check app.
+  The first two IPs belong to the CoreDNS pods. The third is the `ClusterIP` for the `kube-dns` service.
+
+  ![](https://user-images.githubusercontent.com/37150991/84260469-b9624e80-ab37-11ea-8a53-a4e3f8d95875.png)
+  I have selected the `kubernetes.default` service to test the DNS response. 
 
