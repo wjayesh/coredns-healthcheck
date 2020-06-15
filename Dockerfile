@@ -31,10 +31,10 @@ FROM ubuntu:latest
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/cmd/coredns-hc/ .
+COPY --from=builder /app/cmd/coredns-healthcheck/ .
 
 # Copy the pre-built q binary from previous stage
-COPY --from=builder /app/cmd/q/ .
+COPY --from=builder /app/cmd/dnsq/ .
 
 # Execute main when starting container
 ENTRYPOINT ["./main"]
