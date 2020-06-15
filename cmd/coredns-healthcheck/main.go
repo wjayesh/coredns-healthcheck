@@ -5,7 +5,7 @@ package main
 import (
 	"flag"
 
-	"github.com/WJayesh/coredns-health/pkg/engine"
+	"github.com/WJayesh/coredns-healthcheck/pkg/engine"
 )
 
 var (
