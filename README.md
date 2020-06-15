@@ -4,7 +4,7 @@
 
 Repository to host work done as part of the Community Bridge program under CoreDNS. 
 
-The [Wiki](https://github.com/WJayesh/healthCheck/wiki) section holds a list of milestones achieved to help track the current development status. 
+The [Milestones](https://github.com/WJayesh/coredns-healthcheck/tree/docs#milestones-) section holds a list of milestones achieved to help track the current development status. 
 
 ## Objective
 
