@@ -13,10 +13,16 @@ RUN go mod download
 COPY . .
 
 # Go inside the main package
-WORKDIR /app/main/
+WORKDIR /app/cmd/coredns-hc/
 
 # Build the Go app
 RUN GOOS=linux go build -o main .
+
+# Go inside the q directory
+WORKDIR /app/cmd/q/
+
+# Build the q source into executable
+RUN GOOS=linux go build -o q .
 
 
 ######## Start a new stage from scratch #######
@@ -25,7 +31,10 @@ FROM ubuntu:latest
 WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage
-COPY --from=builder /app/main .
+COPY --from=builder /app/cmd/coredns-hc/ .
+
+# Copy the pre-built q binary from previous stage
+COPY --from=builder /app/cmd/q/ .
 
 # Execute main when starting container
 ENTRYPOINT ["./main"]
