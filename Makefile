@@ -19,9 +19,9 @@ all:
 
 linter:
 	@echo "Running lint checks"
-	@golint cmd/coredns-healthcheck/*.go
-	@golint pkg/health/*.go
-	@golint pkg/engine/*.go
+	golint cmd/coredns-healthcheck/*.go
+	golint pkg/health/*.go
+	golint pkg/engine/*.go
 	@echo "PASS: golint"
 
 test: covdir linter
