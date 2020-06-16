@@ -19,7 +19,7 @@ all:
 
 linter:
 	@echo "Running lint checks"
-	@golint cmd/coredns-hc/*.go
+	@golint cmd/coredns-healthcheck/*.go
 	@golint pkg/health/*.go
 	@golint pkg/engine/*.go
 	@echo "PASS: golint"
@@ -42,7 +42,7 @@ coverage:
 
 docs:
 	@mkdir -p .doc
-	@godoc -html github.com/wjayesh/health-check/pkg/ > .doc/index.html
+	@godoc -html github.com/wjayesh/coredns-health/pkg/ > .doc/index.html
 	@echo "Run to serve docs:"
 	@echo "    godoc -goroot .doc/ -html -http \":5000\""
 
