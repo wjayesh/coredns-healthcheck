@@ -29,10 +29,13 @@ func Dig(ip string) (string, error) {
 // the output is a valid DNS response
 func IsValidOutput(out string) bool {
 	if strings.Contains(out, "i/o timeout") {
+		logrus.Info("I/O Timeout detected.")
 		return false
-	} else if !strings.Contains(out, "NOERROR") {
+	} else if !strings.Contains(out, "NOERROR.") {
+		logrus.Info("Status code not equal to NOERROR.")
 		return false
 	}
+	logrus.Info("DNS response is valid. Restarting of pods not needed.")
 	return true
 }
 
