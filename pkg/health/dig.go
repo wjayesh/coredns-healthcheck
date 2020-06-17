@@ -2,6 +2,7 @@ package health
 
 import (
 	"os/exec"
+	"strings"
 
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
@@ -27,7 +28,12 @@ func Dig(ip string) (string, error) {
 // IsValidOutput checks the output string to determine if
 // the output is a valid DNS response
 func IsValidOutput(out string) bool {
-	return false
+	if strings.Contains(out, "i/o timeout") {
+		return false
+	} else if !strings.Contains(out, "NOERROR") {
+		return false
+	}
+	return true
 }
 
 // DigIPs performs queries on kubernetes service running on the default namespace
