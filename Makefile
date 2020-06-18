@@ -62,3 +62,20 @@ dep:
 	@golint || go get -u golang.org/x/lint/golint
 	@#echo "Clean GOPATH/pkg/dep/sources/ if necessary"
 	@#rm -rf $GOPATH/pkg/dep/sources/https---github.com-wjayesh*
+	
+release:
+	@echo "Making release"
+	@if [ $(GIT_BRANCH) != "master" ]; then echo "cannot release to non-master branch $(GIT_BRANCH)" && false; fi
+	@git diff-index --quiet HEAD -- || ( echo "git directory is dirty, commit changes first" && false )
+	@versioned -patch
+	@echo "Patched version"
+	@git add VERSION
+	@git commit -m "released v`cat VERSION | head -1`"
+	@git tag -a v`cat VERSION | head -1` -m "v`cat VERSION | head -1`"
+	@git push
+	@git push --tags
+	@@echo "If necessary, run the following commands:"
+	@echo "  git push --delete origin v$(PLUGIN_VERSION)"
+	@echo "  git tag --delete v$(PLUGIN_VERSION)"
+	
+	
