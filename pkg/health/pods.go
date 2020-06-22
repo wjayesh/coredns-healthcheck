@@ -1,6 +1,7 @@
 package health
 
 import (
+	"context"
 	"errors"
 
 	"github.com/sirupsen/logrus"
@@ -21,7 +22,7 @@ func GetPods(svc *v1.Service, namespace string,
 	listOptions := mv1.ListOptions{LabelSelector: set.AsSelector().String()}
 
 	//using the API to get a PodList that satisfies the selector value
-	pods, err := client.CoreV1().Pods(namespace).List(listOptions)
+	pods, err := client.CoreV1().Pods(namespace).List(context.TODO(), listOptions)
 	if err == nil {
 		return pods, err
 	}
@@ -33,7 +34,7 @@ func GetPods(svc *v1.Service, namespace string,
 // The deployment controller will create new pods automatically
 func RestartPod(client *kubernetes.Clientset, namespace string, ips ...string) {
 	// Get pods from IPs
-	pods, err := client.CoreV1().Pods(namespace).List(mv1.ListOptions{})
+	pods, err := client.CoreV1().Pods(namespace).List(context.TODO(), mv1.ListOptions{})
 	if err != nil {
 		logrus.Error("Error listing all pods", err)
 	} else {
@@ -41,7 +42,7 @@ func RestartPod(client *kubernetes.Clientset, namespace string, ips ...string) {
 			for _, ip := range ips {
 				if pod.Status.PodIP == ip {
 					logrus.Info("Pod to be deleted: ", pod.Name)
-					err := client.CoreV1().Pods(namespace).Delete(pod.Name, &mv1.DeleteOptions{})
+					err := client.CoreV1().Pods(namespace).Delete(context.TODO(), pod.Name, mv1.DeleteOptions{})
 					logrus.Error("Error deleting pod: ", err)
 				}
 			}
