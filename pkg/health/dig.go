@@ -35,10 +35,16 @@ func IsValidOutput(out string) bool {
 	if strings.Contains(out, "i/o timeout") {
 		logrus.Info("I/O Timeout detected.")
 		ts = append(ts, time.Now())
+		if len(ts) > 5 {
+			ts = ts[len(ts)-6:]
+		}
 		return false
 	} else if !strings.Contains(out, "NOERROR") {
 		logrus.Info("Status code not equal to NOERROR.")
 		ts = append(ts, time.Now())
+		if len(ts) > 5 {
+			ts = ts[len(ts)-6:]
+		}
 		return false
 	}
 	logrus.Info("DNS response is valid. Restarting of pods not needed.")
