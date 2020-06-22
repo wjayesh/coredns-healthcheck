@@ -3,10 +3,14 @@ package health
 import (
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
+
+// An int slice to hold a fixed number of timestaps when the pods had failed
+var ts []time.Time
 
 // Dig calls the q executable with arg ip
 // this functionality was not implemented in-line in main because
@@ -30,9 +34,11 @@ func Dig(ip string) (string, error) {
 func IsValidOutput(out string) bool {
 	if strings.Contains(out, "i/o timeout") {
 		logrus.Info("I/O Timeout detected.")
+		ts = append(ts, time.Now())
 		return false
 	} else if !strings.Contains(out, "NOERROR") {
 		logrus.Info("Status code not equal to NOERROR.")
+		ts = append(ts, time.Now())
 		return false
 	}
 	logrus.Info("DNS response is valid. Restarting of pods not needed.")
