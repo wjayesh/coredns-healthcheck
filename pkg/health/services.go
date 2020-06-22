@@ -1,6 +1,7 @@
 package health
 
 import (
+	"context"
 	"errors"
 
 	"github.com/sirupsen/logrus"
@@ -13,7 +14,7 @@ import (
 func GetService() (*v1.Service, error) {
 
 	logrus.Info("Client received: ", client.LegacyPrefix)
-	var svc, err = client.CoreV1().Services(namespace).Get(svcName, mv1.GetOptions{})
+	var svc, err = client.CoreV1().Services(namespace).Get(context.TODO(), svcName, mv1.GetOptions{})
 	if err != nil {
 		// exit
 		logrus.Fatal(err)
@@ -30,7 +31,7 @@ func GetService() (*v1.Service, error) {
 func GetServiceByPort(port int32,
 	client *kubernetes.Clientset) (*v1.Service, error) {
 
-	svcs, err := client.CoreV1().Services(namespace).List(mv1.ListOptions{})
+	svcs, err := client.CoreV1().Services(namespace).List(context.TODO(), mv1.ListOptions{})
 	if err != nil {
 		logrus.Fatal(err)
 	}
