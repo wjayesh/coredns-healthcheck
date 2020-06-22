@@ -15,8 +15,8 @@ var (
 )
 
 var (
-	namespace string = "kube-system"
-	svcName   string = "kube-dns"
+	namespace = "kube-system"
+	svcName   = "kube-dns"
 )
 
 func main() {
