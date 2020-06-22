@@ -3,6 +3,7 @@ package engine
 
 import (
 	"strconv"
+	"time"
 
 	"github.com/WJayesh/coredns-healthcheck/pkg/health"
 	"github.com/sirupsen/logrus"
@@ -51,6 +52,7 @@ func (e Engine) Init(path string) *kubernetes.Clientset {
 // Start runs the health check and checks for failures.
 // It also attempts to fix any terminated pods.
 func (e Engine) Start(client *kubernetes.Clientset) {
+Start:
 	var IPs = health.FindIPs(e.namespace, e.svcName, client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
@@ -81,6 +83,8 @@ func (e Engine) Start(client *kubernetes.Clientset) {
 	}
 	logrus.Info("using the client variable ", client.LegacyPrefix)
 	for {
+		time.Sleep(1 * time.Second)
+		goto Start
 		//infinite loop
 	}
 }
