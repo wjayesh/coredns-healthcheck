@@ -5,12 +5,16 @@ package health
 import (
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
 	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	metrics "k8s.io/metrics/pkg/client/clientset/versioned"
 )
 
-var mc *metrics.Clientset
+var (
+	mClient *metrics.Clientset
+	dClient v1beta1.DeploymentInterface
+)
 
 // GetClient returns a clientset and initializes the metrics client
 func GetClient(pathToCfg string) (*kubernetes.Clientset, error) {
@@ -26,11 +30,18 @@ func GetClient(pathToCfg string) (*kubernetes.Clientset, error) {
 	if err != nil {
 		return nil, err
 	}
-	mc, err = metrics.NewForConfig(config)
+
+	//metrics client
+	mClient, err = metrics.NewForConfig(config)
 	if err != nil {
 		logrus.Error("Error getting metrics client", err)
 	} else {
-		logrus.Info("Metrics client found: ", mc.LegacyPrefix)
+		logrus.Info("Metrics client found: ", mClient.LegacyPrefix)
 	}
+
+	// deployment client
+	dClient := client.ExtensionsV1beta1().Deployments(namespace)
+	logrus.Info("Deployment Client: ", dClient)
+
 	return kubernetes.NewForConfig(config)
 }
