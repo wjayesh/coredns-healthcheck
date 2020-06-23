@@ -9,8 +9,11 @@ import (
 	"k8s.io/client-go/kubernetes"
 )
 
-// An int slice to hold a fixed number of timestaps when the pods had failed
-var ts []time.Time
+var (
+	ts         []time.Time // An int slice to hold a fixed number of timestaps when the pods had failed
+	deployment string      // Name of deployment
+	memFactor  int         // The factor by which to increase memory limit
+)
 
 // Dig calls the q executable with arg ip
 // this functionality was not implemented in-line in main because
@@ -54,7 +57,9 @@ func IsValidOutput(out string) bool {
 
 // DigIPs performs queries on kubernetes service running on the default namespace
 // using coreDNS pods and svcs
-func DigIPs(client *kubernetes.Clientset, IPs map[string][]string) {
+func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]string) {
+	deployment = dn
+	memFactor = mf
 	// TODO: Instead of if statements, implement labels
 	if IPs["Pod IPs"] != nil {
 		podIPs := IPs["Pod IPs"]
@@ -66,7 +71,7 @@ func DigIPs(client *kubernetes.Clientset, IPs map[string][]string) {
 				if !IsValidOutput(out) {
 					logrus.Info("No DNS response from IP Addr: ", ip)
 					logrus.Info("Restarting Pod...")
-					RestartPod(client, ip)
+					RemedyPod(client, namespace, ts, ip)
 				} else {
 					logrus.Info("DNS response from IP Addr: ", ip, out)
 				}
@@ -85,7 +90,7 @@ func DigIPs(client *kubernetes.Clientset, IPs map[string][]string) {
 				if !IsValidOutput(out) {
 					logrus.Info("No DNS response from Service IP Addr: ", ip)
 					logrus.Info("Restarting all service pods...")
-					RestartPod(client, namespace, IPs["Pod IPs"]...)
+					RemedyPod(client, namespace, ts, IPs["Pod IPs"]...)
 				} else {
 					logrus.Info("DNS response from Service IP Addr: ", ip, out)
 				}
