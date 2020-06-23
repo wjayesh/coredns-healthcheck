@@ -6,9 +6,10 @@ import (
 )
 
 var (
-	namespace string
-	svcName   string
-	client    *kubernetes.Clientset
+	namespace  string
+	svcName    string
+	deployment string
+	client     *kubernetes.Clientset
 )
 
 // FindIPs will return a map of IP addresses grouped by Service and Pods
@@ -18,7 +19,7 @@ We take both Service IPs and Pod IPs to be pinged because
 there it is possible that there are multiple point of failures.
 On top of that, individual pods can be remedied.
 */
-func FindIPs(ns string, sn string,
+func FindIPs(ns string, sn string, dn string,
 	clnt *kubernetes.Clientset) map[string][]string {
 
 	logrus.Info("Client received: ", clnt.LegacyPrefix)
@@ -27,6 +28,7 @@ func FindIPs(ns string, sn string,
 	namespace = ns
 	svcName = sn
 	client = clnt
+	deployment = dn
 
 	// We'll first add the Service IP to the map.
 

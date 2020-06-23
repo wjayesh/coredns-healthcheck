@@ -15,8 +15,9 @@ var (
 )
 
 var (
-	namespace = "kube-system"
-	svcName   = "kube-dns"
+	namespace  = "kube-system"
+	svcName    = "kube-dns"
+	deployment = "coredns"
 )
 
 func main() {
@@ -27,6 +28,7 @@ func main() {
 	prefs["port"] = *udpPort
 	prefs["namespace"] = namespace
 	prefs["svcName"] = svcName
+	prefs["deployment"] = deployment
 
 	var e = engine.New(prefs)
 
