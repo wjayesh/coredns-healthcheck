@@ -38,7 +38,6 @@ func IsValidOutput(out string) bool {
 		if len(ts) > 5 {
 			ts = ts[len(ts)-6:]
 		}
-		logrus.Info("Timestamp array: ", ts)
 		return false
 	} else if !strings.Contains(out, "NOERROR") {
 		logrus.Info("Status code not equal to NOERROR.")
@@ -46,10 +45,10 @@ func IsValidOutput(out string) bool {
 		if len(ts) > 5 {
 			ts = ts[len(ts)-6:]
 		}
-		logrus.Info("Timestamp array: ", ts)
 		return false
 	}
 	logrus.Info("DNS response is valid. Restarting of pods not needed.")
+	logrus.Info("Timestamp array: ", ts)
 	return true
 }
 
