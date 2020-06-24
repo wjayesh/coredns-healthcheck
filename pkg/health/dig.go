@@ -65,6 +65,9 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 	if len(IPs["Pod IPs"]) != 0 {
 		podIPs := IPs["Pod IPs"]
 		for _, ip := range podIPs {
+			if ip == "" {
+				continue
+			}
 			out, err := Dig(ip)
 			if err != nil {
 				logrus.Error(err)
@@ -84,6 +87,9 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 	if len(IPs["Service IPs"]) != 0 {
 		serviceIPs := IPs["Service IPs"]
 		for _, ip := range serviceIPs {
+			if ip == "" {
+				continue
+			}
 			out, err := Dig(ip)
 			if err != nil {
 				logrus.Error(err)

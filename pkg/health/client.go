@@ -45,6 +45,6 @@ func GetClient(pathToCfg string) (*kubernetes.Clientset, error) {
 // InitDClient initializes the deployment client for future use.
 func InitDClient(client *kubernetes.Clientset) {
 	// deployment client
-	dClient := client.ExtensionsV1beta1().Deployments(namespace)
+	dClient = client.ExtensionsV1beta1().Deployments(namespace)
 	logrus.Info("Deployment Client: ", dClient)
 }
