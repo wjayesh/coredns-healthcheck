@@ -41,11 +41,13 @@ func RemedyPod(client *kubernetes.Clientset, namespace string, ts []time.Time, i
 		for _, pod := range pods.Items {
 			for _, ip := range ips {
 				logrus.Info("ip being matched: ", ip)
+				logrus.Info("pod.Status.PodIP = ", pod.Status.PodIP)
 				if pod.Status.PodIP == ip {
 					if IsOutOfMemory(ts) {
 						AddMemory(memFactor, pod.Name)
 						return
 					}
+					logrus.Info("Restarting Pod")
 					RestartPod(pod)
 				}
 			}
