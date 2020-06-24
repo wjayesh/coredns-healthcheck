@@ -76,7 +76,7 @@ func AddMemory(memFactor int, name string) {
 	}
 
 	// Sleep till all pods are running again
-	for !PodsReady(dClient) {
+	for !PodsReady() {
 		logrus.Info("Waiting for the pods to be up and running")
 		time.Sleep(500 * time.Millisecond)
 	}
