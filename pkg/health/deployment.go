@@ -5,11 +5,11 @@ import (
 
 	"github.com/sirupsen/logrus"
 	mv1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes/typed/extensions/v1beta1"
 )
 
 // PodsReady checks if the new pods created after the remedial action are up and running
-func PodsReady(dClient v1beta1.DeploymentInterface) bool {
+func PodsReady() bool {
+	logrus.Info("DClient in PodsReady: ", dClient)
 	var d, err = dClient.Get(context.TODO(), deployment, mv1.GetOptions{})
 	if err != nil {
 		logrus.Error("Error getting deployment: ", err)

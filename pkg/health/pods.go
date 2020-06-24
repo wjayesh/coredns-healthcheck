@@ -60,7 +60,8 @@ func RestartPod(pod v1.Pod) {
 	logrus.Error("Error deleting pod: ", err)
 
 	// Sleep till all pods are running again
-	for !PodsReady(dClient) {
+	logrus.Info("Deployment client in RestartPod", dClient)
+	for !PodsReady() {
 		logrus.Info("Waiting for the pods to be up and running")
 		time.Sleep(500 * time.Millisecond)
 	}
