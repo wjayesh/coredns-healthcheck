@@ -48,8 +48,7 @@ func FindIPs(ns string, sn string,
 		// but shouldn't be hardcoded (TODO)
 		groupedIPs["Pod IPs"] = make([]string, 2)
 		for _, pod := range pods.Items {
-			logrus.Info("Pod phase: ", pod.Status.Phase)
-			logrus.Info("Pod type: ", pod.Status.Conditions[0].Type)
+			logrus.Info("Pod phase for name: ", pod.Name+" ", pod.Status.Phase)
 			groupedIPs["Pod IPs"] = append(groupedIPs["Pod IPs"], pod.Status.PodIP)
 		}
 	} else {
