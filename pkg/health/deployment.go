@@ -12,7 +12,7 @@ import (
 func PodsReady(dClient v1beta1.DeploymentInterface) bool {
 	var d, err = dClient.Get(context.TODO(), deployment, mv1.GetOptions{})
 	if err != nil {
-		logrus.Error("Error getting deployment: ", err.Error)
+		logrus.Error("Error getting deployment: ", err)
 		return false
 	}
 	// TODO add number of pods var instead of hardcoding

@@ -61,6 +61,7 @@ func RestartPod(pod v1.Pod) {
 
 	// Sleep till all pods are running again
 	for !PodsReady(dClient) {
+		logrus.Info("Waiting for the pods to be up and running")
 		time.Sleep(500 * time.Millisecond)
 	}
 }
