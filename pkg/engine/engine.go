@@ -53,7 +53,7 @@ func (e Engine) Init(path string) *kubernetes.Clientset {
 		logrus.Error("Client not found: ", err)
 	}
 	logrus.Info("Client received: ", e.client.LegacyPrefix)
-	health.InitDClient(e.client)
+	health.InitDClient(e.client, e.namespace)
 	return e.client
 }
 
