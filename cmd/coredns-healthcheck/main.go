@@ -12,11 +12,13 @@ var (
 	pathToCfg   = flag.String("path", "", "the path to the kubeconfig file")
 	podsAllowed = flag.String("allowPods", "false", "allow creation of lightweight pods in cluster")
 	udpPort     = flag.String("port", "53", "the udp port for the dns server")
+	memFactor   = flag.String("memFactor", "2", "the factor with which to increase memory limit")
 )
 
 var (
-	namespace = "kube-system"
-	svcName   = "kube-dns"
+	namespace  = "kube-system"
+	svcName    = "kube-dns"
+	deployment = "coredns"
 )
 
 func main() {
@@ -27,6 +29,8 @@ func main() {
 	prefs["port"] = *udpPort
 	prefs["namespace"] = namespace
 	prefs["svcName"] = svcName
+	prefs["deployment"] = deployment
+	prefs["memFactor"] = *memFactor
 
 	var e = engine.New(prefs)
 

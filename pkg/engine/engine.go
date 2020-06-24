@@ -18,6 +18,8 @@ type Engine struct {
 	port        int                   // the port of the service to be tested. default: 53
 	namespace   string                // the namespace of the resource
 	svcName     string                // the name of the service
+	deployment  string                // the name of the deployment
+	memFactor   int                   // the factor by which to increase memory
 	client      *kubernetes.Clientset // the clientset
 }
 
@@ -33,8 +35,13 @@ func New(prefs map[string]string) Engine {
 	if err == nil {
 		e.port = port
 	}
+	mf, err := strconv.Atoi(prefs["memFactor"])
+	if err == nil {
+		e.memFactor = mf
+	}
 	e.svcName = prefs["svcName"]
 	e.namespace = prefs["namespace"]
+	e.deployment = prefs["deployment"]
 	return e
 }
 
@@ -59,7 +66,7 @@ Start:
 	// TODO: Check if the number of pod ips in map match the
 	// number of coreDNS pods
 	if e.path == "" {
-		health.DigIPs(client, IPs)
+		health.DigIPs(client, e.deployment, e.memFactor, IPs)
 	}
 	if e.path != "" && e.podsAllowed == true {
 		// createPod()
@@ -77,7 +84,7 @@ Start:
 			IPs := make(map[string][]string)
 			IPs["Service IPs"] = make([]string, 1)
 			IPs["Service IPs"] = append(IPs["Service IPs"], service.Spec.ExternalIPs...)
-			health.DigIPs(client, IPs)
+			health.DigIPs(client, e.deployment, e.memFactor, IPs)
 		}
 
 	}
