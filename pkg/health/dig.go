@@ -20,6 +20,7 @@ var (
 // we might change the working later depending on best practices.
 func Dig(ip string) (string, error) {
 	// using the k8s service to check DNS availability
+	logrus.Info("IP address being queried: ", ip)
 	cmd := exec.Command("./q", "@"+ip, "kubernetes.default.svc.cluster.local")
 	out, err := cmd.CombinedOutput()
 	logrus.Info("Output after executing q: ", string(out))
@@ -61,7 +62,7 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 	deployment = dn
 	memFactor = mf
 	// TODO: Instead of if statements, implement labels
-	if IPs["Pod IPs"] != nil {
+	if len(IPs["Pod IPs"]) != 0 {
 		podIPs := IPs["Pod IPs"]
 		for _, ip := range podIPs {
 			out, err := Dig(ip)
@@ -80,7 +81,7 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 	}
 
 	// Now check Service IPs
-	if IPs["Service IPs"] != nil {
+	if len(IPs["Service IPs"]) != 0 {
 		serviceIPs := IPs["Service IPs"]
 		for _, ip := range serviceIPs {
 			out, err := Dig(ip)
