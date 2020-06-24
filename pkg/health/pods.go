@@ -43,9 +43,8 @@ func RemedyPod(client *kubernetes.Clientset, namespace string, ts []time.Time, i
 					if IsOutOfMemory(ts) {
 						AddMemory(memFactor, pod.Name)
 						return
-					} else {
-						RestartPod(pod)
 					}
+					RestartPod(pod)
 				}
 			}
 		}
@@ -59,4 +58,9 @@ func RestartPod(pod v1.Pod) {
 	logrus.Info("Pod to be deleted: ", pod.Name)
 	err := client.CoreV1().Pods(namespace).Delete(context.TODO(), pod.Name, mv1.DeleteOptions{})
 	logrus.Error("Error deleting pod: ", err)
+
+	// Sleep till all pods are running again
+	for !PodsReady(dClient) {
+		time.Sleep(500 * time.Millisecond)
+	}
 }

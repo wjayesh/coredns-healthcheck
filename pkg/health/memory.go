@@ -3,6 +3,7 @@ package health
 import (
 	"context"
 	"strconv"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
@@ -64,6 +65,15 @@ func AddMemory(memFactor int, name string) {
 		logrus.Error("Retry on conflict fails: ", retryErr.Error)
 	}
 
-	// TODO
-	// Sleep till all pods are running again (same in RestartPod)
+	// Sleep till all pods are running again
+	for !PodsReady(dClient) {
+		time.Sleep(500 * time.Millisecond)
+	}
+
+}
+
+// IsOutOfMemory checks the timestamp array of Pod restarts to figure out
+// if the pods are running out of memory
+func IsOutOfMemory(ts []time.Time) bool {
+	return false
 }
