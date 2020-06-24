@@ -51,7 +51,7 @@ func IsValidOutput(out string) bool {
 		}
 		return false
 	}
-	logrus.Info("DNS response is valid. Restarting of pods not needed.")
+	logrus.Info("DNS response is valid. Remedying of pods not needed.")
 	logrus.Info("Timestamp array: ", ts)
 	return true
 }
@@ -74,7 +74,7 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 			} else {
 				if !IsValidOutput(out) {
 					logrus.Info("No DNS response from IP Addr: ", ip)
-					logrus.Info("Restarting Pod...")
+					logrus.Info("Remedying Pod...")
 					RemedyPod(client, namespace, ts, ip)
 				} else {
 					logrus.Info("DNS response from IP Addr: ", ip, out)
@@ -96,7 +96,7 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 			} else {
 				if !IsValidOutput(out) {
 					logrus.Info("No DNS response from Service IP Addr: ", ip)
-					logrus.Info("Restarting all service pods...")
+					logrus.Info("Remedying all service pods...")
 					RemedyPod(client, namespace, ts, IPs["Pod IPs"]...)
 				} else {
 					logrus.Info("DNS response from Service IP Addr: ", ip, out)
