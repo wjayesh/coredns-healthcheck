@@ -31,7 +31,7 @@ func GetClient(pathToCfg string) (*kubernetes.Clientset, error) {
 		return nil, err
 	}
 
-	//metrics client
+	// metrics client
 	mClient, err = metrics.NewForConfig(config)
 	if err != nil {
 		logrus.Error("Error getting metrics client", err)
@@ -39,9 +39,12 @@ func GetClient(pathToCfg string) (*kubernetes.Clientset, error) {
 		logrus.Info("Metrics client found: ", mClient.LegacyPrefix)
 	}
 
+	return kubernetes.NewForConfig(config)
+}
+
+// InitDClient initializes the deployment client for future use.
+func InitDClient(client *kubernetes.Clientset) {
 	// deployment client
 	dClient := client.ExtensionsV1beta1().Deployments(namespace)
 	logrus.Info("Deployment Client: ", dClient)
-
-	return kubernetes.NewForConfig(config)
 }
