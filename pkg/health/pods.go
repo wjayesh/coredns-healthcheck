@@ -33,12 +33,14 @@ func GetPods(svc *v1.Service, namespace string,
 // RemedyPod chooses the right way to bring failed pods back to life
 func RemedyPod(client *kubernetes.Clientset, namespace string, ts []time.Time, ips ...string) {
 	// Get pods from IPs
+	logrus.Info("Inside RemedyPod with ips: ", ips)
 	pods, err := client.CoreV1().Pods(namespace).List(context.TODO(), mv1.ListOptions{})
 	if err != nil {
 		logrus.Error("Error listing all pods", err)
 	} else {
 		for _, pod := range pods.Items {
 			for _, ip := range ips {
+				logrus.Info("ip being matched: ", ip)
 				if pod.Status.PodIP == ip {
 					if IsOutOfMemory(ts) {
 						AddMemory(memFactor, pod.Name)
