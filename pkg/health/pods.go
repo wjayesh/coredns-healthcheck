@@ -38,8 +38,8 @@ func RemedyPod(client *kubernetes.Clientset, namespace string, ts []time.Time, i
 	if err != nil {
 		logrus.Error("Error listing all pods", err)
 	} else {
-		for _, pod := range pods.Items {
-			for _, ip := range ips {
+		for _, ip := range ips {
+			for _, pod := range pods.Items {
 				logrus.Info("ip being matched: ", ip)
 				logrus.Info("pod.Status.PodIP = ", pod.Status.PodIP)
 				if pod.Status.PodIP == ip {
@@ -63,10 +63,6 @@ func RestartPod(pod v1.Pod) {
 	err := client.CoreV1().Pods(namespace).Delete(context.TODO(), pod.Name, mv1.DeleteOptions{})
 	logrus.Error("Error deleting pod: ", err)
 
-	// Sleep till all pods are running again
-	logrus.Info("Deployment client in RestartPod", dClient)
-	for !PodsReady() {
-		logrus.Info("Waiting for the pods to be up and running")
-		time.Sleep(500 * time.Millisecond)
-	}
+	// No need to sleep here till all pods are running again.
+	// this is taken care of in lookup.go (checking if all pods are running).
 }
