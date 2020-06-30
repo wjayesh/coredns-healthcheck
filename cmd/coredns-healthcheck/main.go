@@ -13,6 +13,7 @@ var (
 	podsAllowed = flag.String("allowPods", "false", "allow creation of lightweight pods in cluster")
 	udpPort     = flag.String("port", "53", "the udp port for the dns server")
 	memFactor   = flag.String("memFactor", "2", "the factor with which to increase memory limit")
+	replicas    = flag.String("replicas", "2", "the number of CoreDNS pods in deployment")
 )
 
 var (
@@ -31,6 +32,7 @@ func main() {
 	prefs["svcName"] = svcName
 	prefs["deployment"] = deployment
 	prefs["memFactor"] = *memFactor
+	prefs["replicas"] = *replicas
 
 	var e = engine.New(prefs)
 
