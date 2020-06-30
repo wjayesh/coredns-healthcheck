@@ -76,7 +76,7 @@ spec:
   apiVersion: rbac.authorization.k8s.io/v1
   metadata:
     namespace: kube-system
-    name: service-reader
+    name: health-manager
   rules:
   - apiGroups: [""] # "" indicates the core API group
     resources: ["services", "pods"]
@@ -87,8 +87,8 @@ spec:
   ```
   This cluster role can be bound to your default service account in the default namespace as follows:
   ```
-  kubectl create clusterrolebinding ip-finder-pod \
-  --clusterrole=ip-finder  \
+  kubectl create clusterrolebinding health-role-pod \
+  --clusterrole=health-manager  \
   --serviceaccount=default:default
   ```
   ## Milestones ✨
