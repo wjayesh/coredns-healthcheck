@@ -16,7 +16,10 @@ func PodsReady() bool {
 		return false
 	}
 	// TODO add number of pods var instead of hardcoding
-	if d.Status.UpdatedReplicas == 2 {
+	// the number of updated pods and the total no of pods both should be two.
+	// this solves the problem when >2 pods (some with status other than ready)
+	// are present and the func still returns true.
+	if d.Status.UpdatedReplicas == 2 && d.Status.Replicas == 2 {
 		logrus.Info("All pods are ready")
 		return true
 	}
