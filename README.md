@@ -75,12 +75,15 @@ spec:
   kind: ClusterRole
   apiVersion: rbac.authorization.k8s.io/v1
   metadata:
-    namespace: default
-    name: ip-finder
+    namespace: kube-system
+    name: service-reader
   rules:
   - apiGroups: [""] # "" indicates the core API group
     resources: ["services", "pods"]
-    verbs: ["get", "watch", "list", "create", "update", "delete"]
+    verbs: ["get", "watch", "list", "create", "update", "patch",  "delete"]
+  - apiGroups: ["extensions", "apps"]
+    resources: ["deployments"]
+    verbs: ["get", "watch", "list", "create", "update", "patch",  "delete"]
   ```
   This cluster role can be bound to your default service account in the default namespace as follows:
   ```
