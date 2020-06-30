@@ -20,6 +20,7 @@ type Engine struct {
 	svcName     string                // the name of the service
 	deployment  string                // the name of the deployment
 	memFactor   int                   // the factor by which to increase memory
+	replicas    int                   // no of CoreDNS pods in deployment
 	client      *kubernetes.Clientset // the clientset
 }
 
@@ -38,6 +39,10 @@ func New(prefs map[string]string) Engine {
 	mf, err := strconv.Atoi(prefs["memFactor"])
 	if err == nil {
 		e.memFactor = mf
+	}
+	replicas, err := strconv.Atoi(prefs["replicas"])
+	if err == nil {
+		e.replicas = replicas
 	}
 	e.svcName = prefs["svcName"]
 	e.namespace = prefs["namespace"]
@@ -61,11 +66,15 @@ func (e Engine) Init(path string) *kubernetes.Clientset {
 // It also attempts to fix any terminated pods.
 func (e Engine) Start(client *kubernetes.Clientset) {
 Start:
-	var IPs = health.FindIPs(e.namespace, e.svcName, client)
+	var IPs = health.FindIPs(e.namespace, e.svcName, e.replicas, client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
-	// TODO: Check if the number of pod ips in map match the
+	// Check if the number of pod ips in map match the
 	// number of coreDNS pods
+	// Answer: There's no need to do that here. The case where
+	// there's less number of IPs is highly improbable to happen.
+	// This is because in GetPods func, we do not specify that we
+	// are searching for just "Running" pods.
 	if e.path == "" {
 		health.DigIPs(client, e.deployment, e.memFactor, IPs)
 	}
