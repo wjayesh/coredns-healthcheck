@@ -15,11 +15,11 @@ func PodsReady() bool {
 		logrus.Error("Error getting deployment: ", err)
 		return false
 	}
-	// TODO add number of pods var instead of hardcoding
 	// the number of updated pods and the total no of pods both should be two.
-	// this solves the problem when >2 pods (some with status other than ready)
+	// this solves the problem when >replicas pods (some with status other than ready)
 	// are present and the func still returns true.
-	if d.Status.UpdatedReplicas == 2 && d.Status.Replicas == 2 {
+	if d.Status.UpdatedReplicas == int32(replicas) &&
+		d.Status.Replicas == int32(replicas) {
 		logrus.Info("All pods are ready")
 		return true
 	}

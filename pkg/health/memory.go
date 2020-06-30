@@ -57,8 +57,8 @@ func AddMemory(memFactor int, name string) {
 		var updateErr error
 
 		// for all containers in the deployment, increase memory limit
-		// TODO, use number of pods var instead of hardcoding
-		for i < 2 {
+		// use number of pods var instead of hardcoding
+		for i < replicas {
 			result.Spec.Template.Spec.Containers[i].Resources.Limits =
 				make(map[v1.ResourceName]resource.Quantity)
 

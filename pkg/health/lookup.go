@@ -9,6 +9,7 @@ var (
 	namespace string
 	svcName   string
 	client    *kubernetes.Clientset
+	replicas  int
 )
 
 // FindIPs will return a map of IP addresses grouped by Service and Pods
@@ -18,7 +19,7 @@ We take both Service IPs and Pod IPs to be pinged because
 there it is possible that there are multiple point of failures.
 On top of that, individual pods can be remedied.
 */
-func FindIPs(ns string, sn string,
+func FindIPs(ns string, sn string, rep int,
 	clnt *kubernetes.Clientset) map[string][]string {
 
 	logrus.Info("Client received: ", clnt.LegacyPrefix)
@@ -27,6 +28,7 @@ func FindIPs(ns string, sn string,
 	namespace = ns
 	svcName = sn
 	client = clnt
+	replicas = rep
 
 	// We'll first add the Service IP to the map.
 
@@ -44,9 +46,8 @@ func FindIPs(ns string, sn string,
 
 	var pods, e = GetPods(svc, namespace, client)
 	if e == nil {
-		// There are two pods for CoreDNS.
-		// but shouldn't be hardcoded (TODO)
-		groupedIPs["Pod IPs"] = make([]string, 2)
+		// There are "replicas" no of pods for CoreDNS.
+		groupedIPs["Pod IPs"] = make([]string, replicas)
 		for _, pod := range pods.Items {
 			logrus.Info("Pod phase for name: ", pod.Name+" ", pod.Status.Phase)
 			groupedIPs["Pod IPs"] = append(groupedIPs["Pod IPs"], pod.Status.PodIP)
