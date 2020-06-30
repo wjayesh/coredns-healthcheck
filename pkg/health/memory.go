@@ -87,6 +87,13 @@ func AddMemory(memFactor int, name string) {
 // if the pods are running out of memory. If the restart times are too frequent we
 // can assume that further restarts won't be helpful and so it is a memory issue.
 func IsOutOfMemory(ts []time.Time) bool {
-
+	if len(ts) == 0 {
+		return false
+	}
+	first := ts[0]
+	last := ts[len(ts)-1]
+	if time.Since(first)-time.Since(last) >= 60*time.Second {
+		return true
+	}
 	return false
 }
