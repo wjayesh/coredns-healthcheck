@@ -15,6 +15,7 @@ import (
 // GetMemory returns the memory limit of the container in the pod specified by the name param
 func GetMemory(name string) int64 {
 
+	logrus.Info("Namespace in GetMemory: ", namespace)
 	var podMetrics, err = mClient.MetricsV1alpha1().PodMetricses(namespace).Get(context.TODO(), name, mv1.GetOptions{})
 	if err != nil {
 		logrus.Error("Error getting metrics for pod: ", name, " msg: ", err)
