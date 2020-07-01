@@ -67,6 +67,7 @@ func AddMemory(memFactor int, name string) {
 				resource.MustParse(strconv.Itoa(newMem))
 
 			_, updateErr = dClient.Update(context.TODO(), result, mv1.UpdateOptions{})
+			logrus.Info("Update err: ", updateErr)
 			i = i + 1
 		}
 		return updateErr
