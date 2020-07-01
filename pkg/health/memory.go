@@ -54,22 +54,17 @@ func AddMemory(memFactor int, name string) {
 		if err != nil {
 			logrus.Error("Error getting deployment :", err)
 		}
-		var i = 0
 		var updateErr error
 
-		// for all containers in the deployment, increase memory limit
-		// use number of pods var instead of hardcoding
-		for i < replicas {
-			result.Spec.Template.Spec.Containers[i].Resources.Limits =
-				make(map[v1.ResourceName]resource.Quantity)
+		result.Spec.Template.Spec.Containers[0].Resources.Limits =
+			make(map[v1.ResourceName]resource.Quantity)
 
-			result.Spec.Template.Spec.Containers[i].Resources.Limits[v1.ResourceMemory] =
-				resource.MustParse(strconv.Itoa(newMem))
+		result.Spec.Template.Spec.Containers[0].Resources.Limits[v1.ResourceMemory] =
+			resource.MustParse(strconv.Itoa(newMem))
 
-			_, updateErr = dClient.Update(context.TODO(), result, mv1.UpdateOptions{})
-			logrus.Info("Update err: ", updateErr)
-			i = i + 1
-		}
+		_, updateErr = dClient.Update(context.TODO(), result, mv1.UpdateOptions{})
+		logrus.Info("Update err: ", updateErr)
+
 		return updateErr
 	})
 
