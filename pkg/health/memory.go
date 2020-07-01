@@ -15,7 +15,7 @@ import (
 // GetMemory returns the memory limit of the container in the pod specified by the name param
 func GetMemory(name string) int64 {
 
-	logrus.Info("Namespace in GetMemory: ", namespace)
+	// logrus.Info("Namespace in GetMemory: ", namespace)
 	var podMetrics, err = mClient.MetricsV1alpha1().PodMetricses(namespace).Get(context.TODO(), name, mv1.GetOptions{})
 	if err != nil {
 		logrus.Error("Error getting metrics for pod: ", name, " msg: ", err)
@@ -40,10 +40,7 @@ func AddMemory(memFactor int, name string) {
 		memFactor = 2
 	}
 
-	currMem := 10
-	if currMem == -1 {
-		logrus.Error("Memory limit value could not be fetched")
-	}
+	currMem := 170
 	newMem := int(currMem) * memFactor
 
 	// conflict might occur if the deployment gets updated while we're trying to modify it.
@@ -84,14 +81,13 @@ func AddMemory(memFactor int, name string) {
 // if the pods are running out of memory. If the restart times are too frequent we
 // can assume that further restarts won't be helpful and so it is a memory issue.
 func IsOutOfMemory(ts []time.Time) bool {
-	// if len(ts) == 0 {
-	// 	return false
-	// }
-	// first := ts[0]
-	// last := ts[len(ts)-1]
-	// if time.Since(first)-time.Since(last) <= 30*time.Second {
-	// 	return true
-	// }
-	// return false
-	return true
+	if len(ts) == 0 {
+		return false
+	}
+	first := ts[0]
+	last := ts[len(ts)-1]
+	if time.Since(first)-time.Since(last) <= 30*time.Second {
+		return true
+	}
+	return false
 }
