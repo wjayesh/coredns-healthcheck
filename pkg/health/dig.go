@@ -2,7 +2,6 @@ package health
 
 import (
 	"os/exec"
-	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -36,24 +35,25 @@ func Dig(ip string) (string, error) {
 // IsValidOutput checks the output string to determine if
 // the output is a valid DNS response
 func IsValidOutput(out string) bool {
-	if strings.Contains(out, "i/o timeout") {
-		logrus.Info("I/O Timeout detected.")
-		ts = append(ts, time.Now())
-		if len(ts) > 12 {
-			ts = ts[len(ts)-13:]
-		}
-		return false
-	} else if !strings.Contains(out, "NOERROR") {
-		logrus.Info("Status code not equal to NOERROR.")
-		ts = append(ts, time.Now())
-		if len(ts) > 12 {
-			ts = ts[len(ts)-13:]
-		}
-		return false
-	}
-	logrus.Info("DNS response is valid. Remedying of pods not needed.")
-	logrus.Info("Timestamp array: ", ts)
-	return true
+	return false
+	// if strings.Contains(out, "i/o timeout") {
+	// 	logrus.Info("I/O Timeout detected.")
+	// 	ts = append(ts, time.Now())
+	// 	if len(ts) > 12 {
+	// 		ts = ts[len(ts)-13:]
+	// 	}
+	// 	return false
+	// } else if !strings.Contains(out, "NOERROR") {
+	// 	logrus.Info("Status code not equal to NOERROR.")
+	// 	ts = append(ts, time.Now())
+	// 	if len(ts) > 12 {
+	// 		ts = ts[len(ts)-13:]
+	// 	}
+	// 	return false
+	// }
+	// logrus.Info("DNS response is valid. Remedying of pods not needed.")
+	// logrus.Info("Timestamp array: ", ts)
+	// return true
 }
 
 // DigIPs performs queries on kubernetes service running on the default namespace
