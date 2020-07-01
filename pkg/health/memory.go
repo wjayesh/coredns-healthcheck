@@ -40,7 +40,7 @@ func AddMemory(memFactor int, name string) {
 		memFactor = 2
 	}
 
-	currMem := GetMemory(name)
+	currMem := 10
 	if currMem == -1 {
 		logrus.Error("Memory limit value could not be fetched")
 	}
