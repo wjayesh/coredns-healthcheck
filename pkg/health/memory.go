@@ -92,7 +92,7 @@ func IsOutOfMemory(ts []time.Time) bool {
 	}
 	first := ts[0]
 	last := ts[len(ts)-1]
-	if time.Since(first)-time.Since(last) >= 60*time.Second {
+	if time.Since(first)-time.Since(last) <= 30*time.Second {
 		return true
 	}
 	return false
