@@ -2,7 +2,6 @@ package health
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"github.com/sirupsen/logrus"
@@ -13,23 +12,14 @@ import (
 )
 
 // GetMemory returns the memory limit of the container in the pod specified by the name param
-func GetMemory(name string) int64 {
+func GetMemory() resource.Quantity {
 
-	// logrus.Info("Namespace in GetMemory: ", namespace)
-	var podMetrics, err = mClient.MetricsV1alpha1().PodMetricses(namespace).Get(context.TODO(), name, mv1.GetOptions{})
+	result, err := dClient.Get(context.TODO(), deployment, mv1.GetOptions{})
 	if err != nil {
-		logrus.Error("Error getting metrics for pod: ", name, " msg: ", err)
-		return -1
+		logrus.Error("Error getting deployment :", err)
 	}
-	for _, container := range podMetrics.Containers {
-		memory, ok := container.Usage.Memory().AsInt64()
-		if !ok {
-			logrus.Error("Error getting the memory usage of container")
-		} else {
-			return memory
-		}
-	}
-	return -1
+
+	return result.Spec.Template.Spec.Containers[0].Resources.Limits[v1.ResourceMemory]
 }
 
 // AddMemory multiplies the existing memory limit of deployment by memFactor
@@ -40,8 +30,13 @@ func AddMemory(memFactor int, name string) {
 		memFactor = 2
 	}
 
-	currMem := 170
-	newMem := int(currMem) * memFactor
+	currMem := GetMemory()
+	var newMem = resource.NewQuantity(0, resource.DecimalSI)
+	var i = 0
+	for i < memFactor {
+		newMem.Add(currMem)
+		i = i + 1
+	}
 
 	// conflict might occur if the deployment gets updated while we're trying to modify it.
 	// hence, retry on conflict is used.
@@ -57,7 +52,7 @@ func AddMemory(memFactor int, name string) {
 			make(map[v1.ResourceName]resource.Quantity)
 
 		result.Spec.Template.Spec.Containers[0].Resources.Limits[v1.ResourceMemory] =
-			resource.MustParse(strconv.Itoa(newMem))
+			*newMem
 
 		_, updateErr = dClient.Update(context.TODO(), result, mv1.UpdateOptions{})
 		logrus.Info("Update err: ", updateErr)
