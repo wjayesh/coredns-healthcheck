@@ -39,15 +39,15 @@ func IsValidOutput(out string) bool {
 	if strings.Contains(out, "i/o timeout") {
 		logrus.Info("I/O Timeout detected.")
 		ts = append(ts, time.Now())
-		if len(ts) > 20 {
-			ts = ts[len(ts)-21:]
+		if len(ts) > 12 {
+			ts = ts[len(ts)-13:]
 		}
 		return false
 	} else if !strings.Contains(out, "NOERROR") {
 		logrus.Info("Status code not equal to NOERROR.")
 		ts = append(ts, time.Now())
-		if len(ts) > 20 {
-			ts = ts[len(ts)-21:]
+		if len(ts) > 12 {
+			ts = ts[len(ts)-13:]
 		}
 		return false
 	}
