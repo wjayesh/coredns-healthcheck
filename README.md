@@ -59,6 +59,7 @@ metadata:
   labels:
     target: coredns-deployment
 spec:
+  hostNetwork: true    # to have access to all netns
   containers:
   - name: health-check-container
     image: wjayesh/health:latest
