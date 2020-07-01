@@ -17,7 +17,7 @@ func GetMemory(name string) int64 {
 
 	var podMetrics, err = mClient.MetricsV1alpha1().PodMetricses(namespace).Get(context.TODO(), name, mv1.GetOptions{})
 	if err != nil {
-		logrus.Error("Error getting metrics for pod: ", name)
+		logrus.Error("Error getting metrics for pod: ", name, " msg: ", err)
 		return -1
 	}
 	for _, container := range podMetrics.Containers {
