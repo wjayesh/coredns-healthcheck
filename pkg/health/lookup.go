@@ -1,8 +1,6 @@
 package health
 
 import (
-	"time"
-
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
@@ -46,15 +44,15 @@ func FindIPs(ns string, sn string, rep int,
 
 	// Now, we will add the IP addresses of the pods that are served by svc
 
-Get:
+	//Get:
 	var pods, e = GetPods(svc, namespace, client)
-	for _, pod := range pods.Items {
-		if pod.Status.Phase == "Pending" {
-			time.Sleep(500 * time.Millisecond)
-			logrus.Info("Waiting for all pods to be running.")
-			goto Get
-		}
-	}
+	// for _, pod := range pods.Items {
+	// 	if pod.Status.Phase == "Pending" {
+	// 		time.Sleep(500 * time.Millisecond)
+	// 		logrus.Info("Waiting for all pods to be running.")
+	// 		goto Get
+	// 	}
+	// }
 	if e == nil {
 		// There are "replicas" no of pods for CoreDNS.
 		groupedIPs["Pod IPs"] = make([]string, replicas)
