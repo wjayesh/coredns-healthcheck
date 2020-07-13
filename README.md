@@ -1,5 +1,6 @@
 # HealthCheck-CoreDNS
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://pkg.go.dev/github.com/WJayesh/health-check) &nbsp;
+[![Go Report Card](https://goreportcard.com/badge/github.com/wjayesh/coredns-healthcheck)](https://goreportcard.com/report/github.com/wjayesh/coredns-healthcheck) &nbsp;
 ![Docker Image CI](https://github.com/WJayesh/healthCheck/workflows/Docker%20Image%20CI/badge.svg) &nbsp; ![lint-test](https://github.com/WJayesh/health-check/workflows/lint-test/badge.svg) 
 
 Repository to host work done as part of the Community Bridge program under CoreDNS. 
@@ -26,6 +27,34 @@ This project idea aims to get around limitations on Kubernetes’ health check a
 - Restart CoreDNS pods by interacting with Kubernetes API through the Golang application, if the response from the cluster and pod IPs is unsatisfactory.  
 
 Thus, making the state of CoreDNS available externally and reliably is important to ensure important services run as they are expected to.
+
+## Architecture 
+
+The binary is designed to access all network namespaces and run commands in them. As such, it needs to be deployed on every node, just like a CNI plugin. 
+This can be achieved through a `DaemonSet`.
+
+![Architecture](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Architecture%201.png)
+
+Inside a node, there exists different pods bound to their respective namespaces. The binary is deployed on the host network and is thus on the root network namespace. 
+
+![Inside Node](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Inside%20Node.png)
+
+### Workflow
+
+Firstly, the binary queries the CoreDNS pods from the host namespace and checks the repsonse. 
+
+* If the response received is unsatisfactory, then the pods are restarted, or the memory limit is increased if restarting doesn't help.
+
+* If the response is correct, the binary proceeds to list all namespaces on the host and starts a session in each, one by one.
+
+  ![Arch. Wf 1](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%201.png)
+
+  It then queries the CoreDNS pods from every namespace to check the DNS availability.
+
+  ![Arch. Wf 2](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%202.png)
+
+  If the service is unavailable from any namespace then, the `etc/resolv.conf` file is inspected to look for possible causes of failure. 
+  
 
 ## Deployment 
 
@@ -59,6 +88,7 @@ metadata:
   labels:
     target: coredns-deployment
 spec:
+  hostNetwork: true    # to have access to all netns
   containers:
   - name: health-check-container
     image: wjayesh/health:latest
