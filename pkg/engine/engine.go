@@ -26,8 +26,8 @@ type Engine struct {
 
 // New returns an Engine instance initialized with the
 // supplied preferences
-func New(prefs map[string]string) Engine {
-	var e Engine
+func New(prefs map[string]string) *Engine {
+	var e *Engine
 	podsAllowed, err := strconv.ParseBool(prefs["podsAllowed"])
 	if err == nil {
 		e.podsAllowed = podsAllowed
@@ -51,7 +51,7 @@ func New(prefs map[string]string) Engine {
 }
 
 // Init connects the application to the cluster's api-server
-func (e Engine) Init(path string) *kubernetes.Clientset {
+func (e *Engine) Init(path string) *kubernetes.Clientset {
 	var err error
 	e.client, err = health.GetClient(e.path)
 	if e.client == nil {
@@ -64,7 +64,7 @@ func (e Engine) Init(path string) *kubernetes.Clientset {
 
 // Start runs the health check and checks for failures.
 // It also attempts to fix any terminated pods.
-func (e Engine) Start(client *kubernetes.Clientset) {
+func (e *Engine) Start(client *kubernetes.Clientset) {
 Start:
 	var IPs = health.FindIPs(e.namespace, e.svcName, e.replicas, client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
