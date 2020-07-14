@@ -3,9 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/wjayesh/coredns-healthcheck)](https://goreportcard.com/report/github.com/wjayesh/coredns-healthcheck) &nbsp;
 ![Docker Image CI](https://github.com/WJayesh/healthCheck/workflows/Docker%20Image%20CI/badge.svg) &nbsp; ![lint-test](https://github.com/WJayesh/health-check/workflows/lint-test/badge.svg) 
 
-Repository to host work done as part of the Community Bridge program under CoreDNS. 
-
-The [Milestones](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-) section holds a list of milestones achieved to help track the current development status. 
+A binary and packages to perform health checks on pods and services running on Kubernetes and to remedy any failures.
 
 ## Contents
 
