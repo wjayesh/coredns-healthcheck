@@ -9,15 +9,15 @@ The [Milestones](https://github.com/WJayesh/coredns-healthcheck/tree/main#milest
 
 ## Contents
 
-* [**Objective**](https://github.com/wjayesh/coredns-healthcheck/blob/docs/README.md#objective)
+* [**Objective**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#objective)
 
-* [**Motivation and Scope**](https://github.com/wjayesh/coredns-healthcheck/blob/docs/README.md#motivation-and-scope)
+* [**Motivation and Scope**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#motivation-and-scope)
 
-* [**Architecture**](https://github.com/wjayesh/coredns-healthcheck/blob/docs/README.md#architecture)
+* [**Architecture**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#architecture)
 
-* [**Workflow**](https://github.com/wjayesh/coredns-healthcheck/blob/docs/README.md#workflow)
+* [**Workflow**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#workflow)
 
-* [**Deployment**](https://github.com/wjayesh/coredns-healthcheck/blob/docs/README.md#deployment)
+* [**Deployment**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#deployment)
 
 * [**Milestones**](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-)
 
