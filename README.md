@@ -58,7 +58,11 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
 
 ## Deployment 
 
-The application can be deployed either inside a Kubernetes cluster or outside it. When the deployment is done as a pod in a cluster, 
+
+The application can be deployed either inside a Kubernetes cluster or outside it. Even inside a cluster, it can be deployed as a `DaemonSet` so that ir runs on all nodes or it can be deployed on a single node too. 
+The driving principle behind this binary is that it should function gracefully under all conditions. 
+
+When the deployment is done as a pod in a cluster, 
 no flags need to be used. 
 
 When deploying externally, the `kubeconfig` file path has to be provided so that authentication with the api-server can be done. 
@@ -89,6 +93,7 @@ metadata:
     target: coredns-deployment
 spec:
   hostNetwork: true    # to have access to all netns
+  dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
   containers:
   - name: health-check-container
     image: wjayesh/health:latest
@@ -96,7 +101,42 @@ spec:
   restartPolicy: OnFailure
   ```
   
+  This definition can be used in a `DaemonSet`. An example:
+  
+```yml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: coredns-hc
+  namespace: kube-system
+  labels:
+    k8s-app: health-check
+spec:
+  selector:
+    matchLabels:
+      target: coredns-deployment
+  template:
+    metadata:
+      labels:
+        target: coredns-deployment
+    spec:
+      tolerations:
+      # this toleration is to have the daemonset runnable on master nodes
+      # remove it if your masters can't run pods
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
+      containers:
+      - name: health-check-container
+        image: wjayesh/health:latest
+        args: ["-path=PATH", "-allowPods=BOOL", "-udpPort=PORT"]
+        restartPolicy: OnFailure
+  ```
+  
   #### Note 
+  * The DNS ploicy needs to be set to `ClusterFirstWithHostNet` explicitly. Reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  
   * Keep in mind that you cannot use environment variables like `"$(PORT)"` as identifiers inside the args field. 
   This is because there is no shell being run in the container and your variables won't resolve to their values. 
   
