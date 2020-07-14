@@ -47,7 +47,7 @@ This can be achieved through a `DaemonSet`.
 
 ![Architecture](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Architecture%201.png)
 
-Inside a node, there exists different pods bound to their respective namespaces. The binary is deployed on the host network and is thus on the root network namespace. 
+Inside a node, there exist different pods bound to their respective namespaces. The binary is deployed on the host network and is thus on the root network namespace. 
 
 ![Inside Node](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Inside%20Node.png)
 
@@ -65,7 +65,7 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
 
   ![Arch. Wf 2](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%202.png)
 
-  If the service is unavailable from any namespace then, the `etc/resolv.conf` file is inspected to look for possible causes of failure. 
+  If the service is unavailable from any namespace, the `etc/resolv.conf` file is then inspected to look for possible causes of failure. 
   
 
 ## Deployment 
