@@ -93,6 +93,7 @@ metadata:
     target: coredns-deployment
 spec:
   hostNetwork: true    # to have access to all netns
+  dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
   containers:
   - name: health-check-container
     image: wjayesh/health:latest
@@ -124,6 +125,8 @@ spec:
       # remove it if your masters can't run pods
       - key: node-role.kubernetes.io/master
         effect: NoSchedule
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
       containers:
       - name: health-check-container
         image: wjayesh/health:latest
@@ -132,6 +135,8 @@ spec:
   ```
   
   #### Note 
+  * The DNS ploicy needs to be set to `ClusterFirstWithHostNet` explicitly. Reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  
   * Keep in mind that you cannot use environment variables like `"$(PORT)"` as identifiers inside the args field. 
   This is because there is no shell being run in the container and your variables won't resolve to their values. 
   
