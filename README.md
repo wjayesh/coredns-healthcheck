@@ -7,6 +7,20 @@ Repository to host work done as part of the Community Bridge program under CoreD
 
 The [Milestones](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-) section holds a list of milestones achieved to help track the current development status. 
 
+## Contents
+
+* [**Objective**]()
+
+* [**Motivation and Scope**]()
+
+* [**Architecture**]()
+
+* [**Workflow**]()
+
+* [**Deployment**]()
+
+* [**Milestones**]()
+
 ## Objective
 
 CoreDNS is the cluster DNS server for Kubernetes and is very critical for the overall health of the Kubernetes cluster. It is important to monitor the health of CoreDNS itself and restarting or repairing any CoreDNS pods that are not behaving correctly.  
