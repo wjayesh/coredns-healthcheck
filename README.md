@@ -3,9 +3,21 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/wjayesh/coredns-healthcheck)](https://goreportcard.com/report/github.com/wjayesh/coredns-healthcheck) &nbsp;
 ![Docker Image CI](https://github.com/WJayesh/healthCheck/workflows/Docker%20Image%20CI/badge.svg) &nbsp; ![lint-test](https://github.com/WJayesh/health-check/workflows/lint-test/badge.svg) 
 
-Repository to host work done as part of the Community Bridge program under CoreDNS. 
+A binary and packages to perform health checks on pods and services running on Kubernetes and to remedy any failures.
 
-The [Milestones](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-) section holds a list of milestones achieved to help track the current development status. 
+## Contents
+
+* [**Objective**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#objective)
+
+* [**Motivation and Scope**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#motivation-and-scope)
+
+* [**Architecture**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#architecture)
+
+* [**Workflow**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#workflow)
+
+* [**Deployment**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#deployment)
+
+* [**Milestones**](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-)
 
 ## Objective
 
@@ -35,7 +47,7 @@ This can be achieved through a `DaemonSet`.
 
 ![Architecture](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Architecture%201.png)
 
-Inside a node, there exists different pods bound to their respective namespaces. The binary is deployed on the host network and is thus on the root network namespace. 
+Inside a node, there exist different pods bound to their respective namespaces. The binary is deployed on the host network and is thus on the root network namespace. 
 
 ![Inside Node](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Inside%20Node.png)
 
@@ -53,7 +65,7 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
 
   ![Arch. Wf 2](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%202.png)
 
-  If the service is unavailable from any namespace then, the `etc/resolv.conf` file is inspected to look for possible causes of failure. 
+  If the service is unavailable from any namespace, the `etc/resolv.conf` file is then inspected to look for possible causes of failure. 
   
 
 ## Deployment 
