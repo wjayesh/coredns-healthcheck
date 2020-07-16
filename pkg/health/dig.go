@@ -58,9 +58,10 @@ func IsValidOutput(out string) bool {
 
 // DigIPs performs queries on kubernetes service running on the default namespace
 // using coreDNS pods and svcs
-func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]string) {
+func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]string) bool {
 	deployment = dn
 	memFactor = mf
+	var success = true
 	// TODO: Instead of if statements, implement labels
 	if len(IPs["Pod IPs"]) != 0 {
 		podIPs := IPs["Pod IPs"]
@@ -75,6 +76,7 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 				if !IsValidOutput(out) {
 					logrus.Info("No DNS response from IP Addr: ", ip)
 					logrus.Info("Remedying Pod...")
+					success = false
 					RemedyPod(client, namespace, ts, ip)
 				} else {
 					logrus.Info("DNS response from IP Addr: ", ip, out)
@@ -97,6 +99,7 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 				if !IsValidOutput(out) {
 					logrus.Info("No DNS response from Service IP Addr: ", ip)
 					logrus.Info("Remedying all service pods...")
+					success = false
 					RemedyPod(client, namespace, ts, IPs["Pod IPs"]...)
 				} else {
 					logrus.Info("DNS response from Service IP Addr: ", ip, out)
@@ -104,4 +107,5 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, IPs map[string][]st
 			}
 		}
 	}
+	return success
 }

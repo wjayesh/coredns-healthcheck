@@ -2,6 +2,7 @@
 package engine
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
@@ -83,6 +84,7 @@ Start:
 }
 
 func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
+	var success bool
 	var IPs = health.FindIPs(e.namespace, e.svcName, e.replicas, client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
@@ -93,7 +95,7 @@ func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
 	// This is because in GetPods func, we do not specify that we
 	// are searching for just "Running" pods.
 	if e.path == "" {
-		health.DigIPs(client, e.deployment, e.memFactor, IPs)
+		success = health.DigIPs(client, e.deployment, e.memFactor, IPs)
 	}
 	if e.path != "" && e.podsAllowed == true {
 		// createPod()
@@ -111,11 +113,14 @@ func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
 			IPs := make(map[string][]string)
 			IPs["Service IPs"] = make([]string, 1)
 			IPs["Service IPs"] = append(IPs["Service IPs"], service.Spec.ExternalIPs...)
-			health.DigIPs(client, e.deployment, e.memFactor, IPs)
+			success = health.DigIPs(client, e.deployment, e.memFactor, IPs)
 		}
 
 	}
-	return nil
+	if success == true {
+		return nil
+	}
+	return errors.New("First Phase error detected")
 }
 
 func (e *Engine) secondPhase(client *kubernetes.Clientset) {
