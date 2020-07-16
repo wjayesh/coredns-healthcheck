@@ -3,9 +3,21 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/wjayesh/coredns-healthcheck)](https://goreportcard.com/report/github.com/wjayesh/coredns-healthcheck) &nbsp;
 ![Docker Image CI](https://github.com/WJayesh/healthCheck/workflows/Docker%20Image%20CI/badge.svg) &nbsp; ![lint-test](https://github.com/WJayesh/health-check/workflows/lint-test/badge.svg) 
 
-Repository to host work done as part of the Community Bridge program under CoreDNS. 
+A binary and packages to perform health checks on pods and services running on Kubernetes and to remedy any failures.
 
-The [Milestones](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-) section holds a list of milestones achieved to help track the current development status. 
+## Contents
+
+* [**Objective**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#objective)
+
+* [**Motivation and Scope**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#motivation-and-scope)
+
+* [**Architecture**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#architecture)
+
+* [**Workflow**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#workflow)
+
+* [**Deployment**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#deployment)
+
+* [**Milestones**](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-)
 
 ## Objective
 
@@ -35,7 +47,7 @@ This can be achieved through a `DaemonSet`.
 
 ![Architecture](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Architecture%201.png)
 
-Inside a node, there exists different pods bound to their respective namespaces. The binary is deployed on the host network and is thus on the root network namespace. 
+Inside a node, there exist different pods bound to their respective namespaces. The binary is deployed on the host network and is thus on the root network namespace. 
 
 ![Inside Node](https://github.com/wjayesh/coredns-healthcheck/blob/docs/assets/docs/images/Inside%20Node.png)
 
@@ -53,12 +65,16 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
 
   ![Arch. Wf 2](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%202.png)
 
-  If the service is unavailable from any namespace then, the `etc/resolv.conf` file is inspected to look for possible causes of failure. 
+  If the service is unavailable from any namespace, the `etc/resolv.conf` file is then inspected to look for possible causes of failure. 
   
 
 ## Deployment 
 
-The application can be deployed either inside a Kubernetes cluster or outside it. When the deployment is done as a pod in a cluster, 
+
+The application can be deployed either inside a Kubernetes cluster or outside it. Even inside a cluster, it can be deployed as a `DaemonSet` so that ir runs on all nodes or it can be deployed on a single node too. 
+The driving principle behind this binary is that it should function gracefully under all conditions. 
+
+When the deployment is done as a pod in a cluster, 
 no flags need to be used. 
 
 When deploying externally, the `kubeconfig` file path has to be provided so that authentication with the api-server can be done. 
@@ -89,6 +105,7 @@ metadata:
     target: coredns-deployment
 spec:
   hostNetwork: true    # to have access to all netns
+  dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
   containers:
   - name: health-check-container
     image: wjayesh/health:latest
@@ -96,7 +113,42 @@ spec:
   restartPolicy: OnFailure
   ```
   
+  This definition can be used in a `DaemonSet`. An example:
+  
+```yml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: coredns-hc
+  namespace: kube-system
+  labels:
+    k8s-app: health-check
+spec:
+  selector:
+    matchLabels:
+      target: coredns-deployment
+  template:
+    metadata:
+      labels:
+        target: coredns-deployment
+    spec:
+      tolerations:
+      # this toleration is to have the daemonset runnable on master nodes
+      # remove it if your masters can't run pods
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
+      containers:
+      - name: health-check-container
+        image: wjayesh/health:latest
+        args: ["-path=PATH", "-allowPods=BOOL", "-udpPort=PORT"]
+        restartPolicy: OnFailure
+  ```
+  
   #### Note 
+  * The DNS ploicy needs to be set to `ClusterFirstWithHostNet` explicitly. Reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  
   * Keep in mind that you cannot use environment variables like `"$(PORT)"` as identifiers inside the args field. 
   This is because there is no shell being run in the container and your variables won't resolve to their values. 
   
