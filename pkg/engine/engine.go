@@ -66,6 +66,23 @@ func (e *Engine) Init(path string) *kubernetes.Clientset {
 // It also attempts to fix any terminated pods.
 func (e *Engine) Start(client *kubernetes.Clientset) {
 Start:
+	// initiate first phase
+	err := e.firstPhase(client)
+
+	// if first phase terminated without errors, then perfrom the second phase of checks.
+	if err == nil {
+		e.secondPhase(client)
+	}
+
+	logrus.Info("using the client variable ", client.LegacyPrefix)
+	for {
+		time.Sleep(1 * time.Second)
+		goto Start
+		//infinite loop
+	}
+}
+
+func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
 	var IPs = health.FindIPs(e.namespace, e.svcName, e.replicas, client)
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
@@ -98,10 +115,9 @@ Start:
 		}
 
 	}
-	logrus.Info("using the client variable ", client.LegacyPrefix)
-	for {
-		time.Sleep(1 * time.Second)
-		goto Start
-		//infinite loop
-	}
+	return nil
+}
+
+func (e *Engine) secondPhase(client *kubernetes.Clientset) {
+
 }
