@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/WJayesh/coredns-healthcheck/pkg/health"
+	"github.com/WJayesh/coredns-healthcheck/pkg/netns"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
@@ -67,12 +68,13 @@ func (e *Engine) Init(path string) *kubernetes.Clientset {
 // It also attempts to fix any terminated pods.
 func (e *Engine) Start(client *kubernetes.Clientset) {
 Start:
+	var IPs = health.FindIPs(e.namespace, e.svcName, e.replicas, client)
 	// initiate first phase
-	err := e.firstPhase(client)
+	err := e.firstPhase(client, true, IPs)
 
 	// if first phase terminated without errors, then perfrom the second phase of checks.
 	if err == nil {
-		e.secondPhase(client)
+		e.secondPhase(client, IPs)
 	}
 
 	logrus.Info("using the client variable ", client.LegacyPrefix)
@@ -83,9 +85,9 @@ Start:
 	}
 }
 
-func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
+func (e *Engine) firstPhase(client *kubernetes.Clientset, remedy bool, IPs map[string][]string) error {
 	var success bool
-	var IPs = health.FindIPs(e.namespace, e.svcName, e.replicas, client)
+
 	logrus.Info("Service IPs: ", IPs["Service IPs"])
 	logrus.Info("Pod IPs: ", IPs["Pod IPs"])
 	// Check if the number of pod ips in map match the
@@ -95,7 +97,7 @@ func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
 	// This is because in GetPods func, we do not specify that we
 	// are searching for just "Running" pods.
 	if e.path == "" {
-		success = health.DigIPs(client, e.deployment, e.memFactor, IPs)
+		success = health.DigIPs(client, e.deployment, e.memFactor, remedy, IPs)
 	}
 	if e.path != "" && e.podsAllowed == true {
 		// createPod()
@@ -113,7 +115,7 @@ func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
 			IPs := make(map[string][]string)
 			IPs["Service IPs"] = make([]string, 1)
 			IPs["Service IPs"] = append(IPs["Service IPs"], service.Spec.ExternalIPs...)
-			success = health.DigIPs(client, e.deployment, e.memFactor, IPs)
+			success = health.DigIPs(client, e.deployment, e.memFactor, remedy, IPs)
 		}
 
 	}
@@ -123,6 +125,9 @@ func (e *Engine) firstPhase(client *kubernetes.Clientset) error {
 	return errors.New("First Phase error detected")
 }
 
-func (e *Engine) secondPhase(client *kubernetes.Clientset) {
-
+func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]string) {
+	list := netns.GetNetNS(client)
+	for _, ns := range *list {
+		ns.Do()
+	}
 }
