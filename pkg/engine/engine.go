@@ -128,6 +128,14 @@ func (e *Engine) firstPhase(client *kubernetes.Clientset, remedy bool, IPs map[s
 func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]string) {
 	list := netns.GetNetNS(client)
 	for _, ns := range *list {
-		ns.Do()
+		if err := ns.Do(func(_ ns.NetNS) error {
+			er := e.firstPhase(client, false, IPs)
+			if er != nil {
+				// check resolv.conf
+			}
+			return nil
+		}); err != nil {
+			logrus.Error("Error performing function inside namespace: ", err)
+		}
 	}
 }
