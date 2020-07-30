@@ -8,6 +8,7 @@ import (
 
 	"github.com/WJayesh/coredns-healthcheck/pkg/health"
 	"github.com/WJayesh/coredns-healthcheck/pkg/netns"
+	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
@@ -127,8 +128,8 @@ func (e *Engine) firstPhase(client *kubernetes.Clientset, remedy bool, IPs map[s
 
 func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]string) {
 	list := netns.GetNetNS(client)
-	for _, ns := range *list {
-		if err := ns.Do(func(_ ns.NetNS) error {
+	for _, targetNS := range *list {
+		if err := targetNS.Do(func(_ ns.NetNS) error {
 			er := e.firstPhase(client, false, IPs)
 			if er != nil {
 				// check resolv.conf
