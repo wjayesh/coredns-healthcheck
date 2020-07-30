@@ -48,8 +48,11 @@ func GetNetNS(client *kubernetes.Clientset) *[]ns.NetNS {
 		path := "/proc/" + pid + "/ns/net"
 
 		// obtaining the NetNS object
-		netns := ns.GetNS(path)
+		netns, err := ns.GetNS(path)
+		if err != nil {
+			logrus.Error("Error getting NS object")
+		}
 		list = append(list, netns)
 	}
-	return list
+	return &list
 }
