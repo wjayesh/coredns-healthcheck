@@ -28,6 +28,7 @@ func getPIDs(pods *[]v1.Pod) []string {
 		pid := string(out)
 		list = append(list, pid)
 	}
+	logrus.Info("The list of pids: ", list)
 	return list
 }
 

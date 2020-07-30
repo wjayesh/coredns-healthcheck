@@ -14,9 +14,8 @@ func ListPods(client *kubernetes.Clientset) *[]v1.Pod {
 	pods, err := client.CoreV1().Pods("").List(context.TODO(), mv1.ListOptions{})
 	if err != nil {
 		return &pods.Items
-	} else {
-		logrus.Error("Error retrieving pods: ", err)
-		empty := make([]v1.Pod, 0)
-		return &empty
 	}
+	logrus.Error("Error retrieving pods: ", err)
+	empty := make([]v1.Pod, 0)
+	return &empty
 }
