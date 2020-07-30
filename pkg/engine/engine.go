@@ -30,7 +30,7 @@ type Engine struct {
 // New returns an Engine instance initialized with the
 // supplied preferences
 func New(prefs map[string]string) *Engine {
-	var e *Engine
+	var e Engine
 	podsAllowed, err := strconv.ParseBool(prefs["podsAllowed"])
 	if err == nil {
 		e.podsAllowed = podsAllowed
@@ -50,7 +50,7 @@ func New(prefs map[string]string) *Engine {
 	e.svcName = prefs["svcName"]
 	e.namespace = prefs["namespace"]
 	e.deployment = prefs["deployment"]
-	return e
+	return &e
 }
 
 // Init connects the application to the cluster's api-server
