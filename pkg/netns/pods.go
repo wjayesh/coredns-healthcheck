@@ -12,7 +12,7 @@ import (
 // ListPods will get all the pods deployed across all namespaces
 func ListPods(client *kubernetes.Clientset) *[]v1.Pod {
 	pods, err := client.CoreV1().Pods("").List(context.TODO(), mv1.ListOptions{})
-	if err != nil {
+	if err == nil {
 		return &pods.Items
 	}
 	logrus.Error("Error retrieving pods: ", err)
