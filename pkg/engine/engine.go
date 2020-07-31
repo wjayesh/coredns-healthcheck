@@ -132,7 +132,9 @@ func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]stri
 		if err := targetNS.Do(func(_ ns.NetNS) error {
 			er := e.firstPhase(client, false, IPs)
 			if er != nil {
-				// check resolv.conf
+				// check if etc/namespace exists or not
+				// this is because we can't access it directly as setns doesn't
+				// relocate etc/namespace/.../ to etc/resolv.conf
 			}
 			return nil
 		}); err != nil {
