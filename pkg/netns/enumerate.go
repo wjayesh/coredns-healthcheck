@@ -17,11 +17,11 @@ func getPIDs(pods *[]v1.Pod) []string {
 		containerID := pod.Status.ContainerStatuses[0].ContainerID
 
 		// command to obtain the process id
-		cmd := exec.Command("docker inspect", "-f", "'{{.State.Pid}}'", containerID)
+		cmd := exec.Command("docker", "inspect", "-f", "'{{.State.Pid}}'", containerID)
 		out, err := cmd.CombinedOutput()
 
 		if err != nil {
-			logrus.Error("Error getting the pid", err)
+			logrus.Error("Error getting the pid ", err)
 			out = make([]byte, 0)
 		}
 
