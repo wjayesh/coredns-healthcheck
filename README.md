@@ -199,4 +199,14 @@ Here I will list the milestones achieved in sync with the tasks done on the proj
 
   ![](https://user-images.githubusercontent.com/37150991/84260469-b9624e80-ab37-11ea-8a53-a4e3f8d95875.png)
   I have selected the `kubernetes.default` service to test the DNS response. 
+  
+* Doubling the memory allocation for the CoreDNS pods.
+
+  ![](https://user-images.githubusercontent.com/37150991/89102633-dd039000-d428-11ea-9292-41d54b61a3bf.png)
+  At first, the memory limit is 170Mi
+  
+
+  ![](https://user-images.githubusercontent.com/37150991/89102657-0e7c5b80-d429-11ea-8760-c5ec87e7ea97.png)
+  Later, it is doubled to 340Mi. This was triggered when multiple subsequent restarts failed to make the pods healthy.
+  
 
