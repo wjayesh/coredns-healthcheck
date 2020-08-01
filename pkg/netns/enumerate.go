@@ -34,7 +34,7 @@ func getPIDs(pods *[]v1.Pod) []string {
 
 // GetNetNS returns a list of ns.NetNS objects
 func GetNetNS(client *kubernetes.Clientset) *[]ns.NetNS {
-	list := make([]ns.NetNS, 1)
+	list := make([]ns.NetNS, 0)
 
 	pods := ListPods(client)
 	pids := getPIDs(pods)
