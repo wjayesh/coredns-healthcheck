@@ -53,7 +53,7 @@ Inside a node, there exist different pods bound to their respective namespaces. 
 
 ### Workflow
 
-Firstly, the binary queries the CoreDNS pods from the host namespace and checks the repsonse. 
+Firstly, the binary queries the CoreDNS pods from the host namespace and checks the response. 
 
 * If the response received is unsatisfactory, then the pods are restarted, or the memory limit is increased if restarting doesn't help.
 
@@ -71,7 +71,7 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
 ## Deployment 
 
 
-The application can be deployed either inside a Kubernetes cluster or outside it. Even inside a cluster, it can be deployed as a `DaemonSet` so that ir runs on all nodes or it can be deployed on a single node too. 
+The application can be deployed either inside a Kubernetes cluster or outside it. Even inside a cluster, it can be deployed as a `DaemonSet` so that it runs on all nodes or it can be deployed on a single node too. 
 The driving principle behind this binary is that it should function gracefully under all conditions. 
 
 When the deployment is done as a pod in a cluster, 
