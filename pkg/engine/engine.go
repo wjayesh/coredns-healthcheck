@@ -66,11 +66,8 @@ func (e *Engine) Init(path string) *kubernetes.Clientset {
 	// registering metrics with prometheus client
 	prometheus.MustRegister(remInstance)
 
-	// start the HTTP server and expose
-	// any metrics on the /metrics endpoint.
-	http.Handle("/metrics", promhttp.Handler())
-	logrus.Info("Beginning to serve on port :8080")
-	logrus.Fatal(http.ListenAndServe(":8080", nil))
+	// helper function to begin listening on a separate goroutine
+	startHandler()
 
 	var err error
 
@@ -84,6 +81,18 @@ func (e *Engine) Init(path string) *kubernetes.Clientset {
 	// initialzing the deployment client
 	health.InitDClient(e.client, e.namespace)
 	return e.client
+}
+
+// startHandler begins listening and serving synchronously
+func startHandler() {
+	go func() {
+		// start the HTTP server and expose
+		// any metrics on the /metrics endpoint.
+
+		http.Handle("/metrics", promhttp.Handler())
+		logrus.Info("Beginning to serve on port :8080")
+		logrus.Fatal(http.ListenAndServe(":8080", nil))
+	}()
 }
 
 // Start runs the health check and checks for failures.
