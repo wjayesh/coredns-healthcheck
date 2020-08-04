@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	oomCount     int
-	restartCount int
+	oomCount     float64
+	restartCount float64
 )
 
 // GetPods will return a PodList of the pods served by the service svc
@@ -78,6 +78,6 @@ func RestartPod(pod v1.Pod) {
 // 1) the number of oom errors
 // 2) number of restarts performed
 // 3) total number of errors
-func GetRemedyMetrics() (oom int, restart int, total int) {
+func GetRemedyMetrics() (oom float64, restart float64, total float64) {
 	return oomCount, restartCount, oomCount + restartCount
 }
