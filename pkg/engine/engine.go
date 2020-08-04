@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/WJayesh/coredns-healthcheck/pkg/exporter"
 	"github.com/WJayesh/coredns-healthcheck/pkg/health"
 	"github.com/WJayesh/coredns-healthcheck/pkg/netns"
 	"github.com/containernetworking/plugins/pkg/ns"
@@ -60,7 +61,7 @@ func New(prefs map[string]string) *Engine {
 func (e *Engine) Init(path string) *kubernetes.Clientset {
 
 	// creating an instance of metrics collector
-	remInstance := exporter.newRemedyCollector()
+	remInstance := exporter.NewRemedyCollector()
 
 	// registering metrics with prometheus client
 	prometheus.MustRegister(remInstance)
