@@ -5,17 +5,18 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-//Struct containing pointers to prometheus descriptors for each metric
-type remedyCollector struct {
+//RemedyCollector is a struct containing pointers to
+//prometheus descriptors for each metric
+type RemedyCollector struct {
 	oomCount      *prometheus.Desc
 	restartCount  *prometheus.Desc
 	totalFailures *prometheus.Desc
 }
 
-//Constructor that initializes every descriptor and
+//NewRemedyCollector is a constructor that initializes every descriptor and
 //returns a pointer to the collector
-func newRemedyCollector() *remedyCollector {
-	return &remedyCollector{
+func NewRemedyCollector() *RemedyCollector {
+	return &RemedyCollector{
 		oomCount: prometheus.NewDesc("oom_count",
 			"Counts the number of OOM errors encountered",
 			nil, nil,
@@ -32,14 +33,14 @@ func newRemedyCollector() *remedyCollector {
 }
 
 //Describe writes all descriptors to the prometheus desc channel.
-func (collector *remedyCollector) Describe(ch chan<- *prometheus.Desc) {
+func (collector *RemedyCollector) Describe(ch chan<- *prometheus.Desc) {
 
 	//Using a helper to return the Desc from the struct.
 	prometheus.DescribeByCollect(collector, ch)
 }
 
 //Collect implements required collect function for all promehteus collectors
-func (collector *remedyCollector) Collect(ch chan<- prometheus.Metric) {
+func (collector *RemedyCollector) Collect(ch chan<- prometheus.Metric) {
 
 	//logic to determine proper metric value to return to prometheus
 	//for each descriptor.
