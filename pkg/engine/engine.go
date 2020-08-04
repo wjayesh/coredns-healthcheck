@@ -3,12 +3,15 @@ package engine
 
 import (
 	"errors"
+	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/WJayesh/coredns-healthcheck/pkg/health"
 	"github.com/WJayesh/coredns-healthcheck/pkg/netns"
 	"github.com/containernetworking/plugins/pkg/ns"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
@@ -55,12 +58,29 @@ func New(prefs map[string]string) *Engine {
 
 // Init connects the application to the cluster's api-server
 func (e *Engine) Init(path string) *kubernetes.Clientset {
+
+	// creating an instance of metrics collector
+	remInstance := exporter.newRemedyCollector()
+
+	// registering metrics with prometheus client
+	prometheus.MustRegister(remInstance)
+
+	// start the HTTP server and expose
+	// any metrics on the /metrics endpoint.
+	http.Handle("/metrics", promhttp.Handler())
+	logrus.Info("Beginning to serve on port :8080")
+	logrus.Fatal(http.ListenAndServe(":8080", nil))
+
 	var err error
+
+	// obataining the k8s clientset
 	e.client, err = health.GetClient(e.path)
 	if e.client == nil {
 		logrus.Error("Client not found: ", err)
 	}
 	logrus.Info("Client received: ", e.client.LegacyPrefix)
+
+	// initialzing the deployment client
 	health.InitDClient(e.client, e.namespace)
 	return e.client
 }
