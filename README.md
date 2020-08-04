@@ -53,7 +53,7 @@ Inside a node, there exist different pods bound to their respective namespaces. 
 
 ### Workflow
 
-Firstly, the binary queries the CoreDNS pods from the host namespace and checks the repsonse. 
+Firstly, the binary queries the CoreDNS pods from the host namespace and checks the response. 
 
 * If the response received is unsatisfactory, then the pods are restarted, or the memory limit is increased if restarting doesn't help.
 
@@ -71,7 +71,7 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
 ## Deployment 
 
 
-The application can be deployed either inside a Kubernetes cluster or outside it. Even inside a cluster, it can be deployed as a `DaemonSet` so that ir runs on all nodes or it can be deployed on a single node too. 
+The application can be deployed either inside a Kubernetes cluster or outside it. Even inside a cluster, it can be deployed as a `DaemonSet` so that it runs on all nodes or it can be deployed on a single node too. 
 The driving principle behind this binary is that it should function gracefully under all conditions. 
 
 When the deployment is done as a pod in a cluster, 
@@ -199,4 +199,14 @@ Here I will list the milestones achieved in sync with the tasks done on the proj
 
   ![](https://user-images.githubusercontent.com/37150991/84260469-b9624e80-ab37-11ea-8a53-a4e3f8d95875.png)
   I have selected the `kubernetes.default` service to test the DNS response. 
+  
+* Doubling the memory allocation for the CoreDNS pods.
+
+  ![](https://user-images.githubusercontent.com/37150991/89102633-dd039000-d428-11ea-9292-41d54b61a3bf.png)
+  At first, the memory limit is 170Mi
+  
+
+  ![](https://user-images.githubusercontent.com/37150991/89102657-0e7c5b80-d429-11ea-8760-c5ec87e7ea97.png)
+  Later, it is doubled to 340Mi. This was triggered when multiple subsequent restarts failed to make the pods healthy.
+  
 
