@@ -10,9 +10,10 @@ import (
 )
 
 var (
-	ts         []time.Time // An int slice to hold a fixed number of timestaps when the pods had failed
-	deployment string      // Name of deployment
-	memFactor  int         // The factor by which to increase memory limit
+	ts            []time.Time // An int slice to hold a fixed number of timestaps when the pods had failed
+	deployment    string      // Name of deployment
+	memFactor     int         // The factor by which to increase memory limit
+	dnsQueryCount float64     // Metric counting the number of time a DNS query was performed.
 )
 
 // Dig calls the q executable with arg ip
@@ -24,11 +25,16 @@ func Dig(ip string) (string, error) {
 	cmd := exec.Command("./q", "@"+ip, "kubernetes.default.svc.cluster.local")
 	out, err := cmd.CombinedOutput()
 	logrus.Info("Output after executing q: ", string(out))
+
 	if err != nil {
 		// the issue is likely to be non ip specific
 		// thus we are not passing ip info with the error
 		return "", err
 	}
+
+	// incrementing metric
+	dnsQueryCount = dnsQueryCount + 1
+
 	output := string(out)
 	return output, nil
 }
@@ -120,4 +126,9 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, remedy bool, IPs ma
 		}
 	}
 	return success
+}
+
+// GetDNSMetrics exports metric variables to the collector function
+func GetDNSMetrics() (queries float64) {
+	return dnsQueryCount
 }
