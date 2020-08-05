@@ -85,7 +85,7 @@ func (e *Engine) Init(path string) *kubernetes.Clientset {
 	return e.client
 }
 
-// startHandler begins listening and serving synchronously
+// startHandler begins listening and serving asynchronously
 func startHandler() {
 	go func() {
 		// start the HTTP server and expose
