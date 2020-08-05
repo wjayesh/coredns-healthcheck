@@ -83,6 +83,7 @@ Name | Description
 remedy | This group has metrics related to the remedial measures taken when the pods fail, such as restarting pods or increasing memory allocation.
 dns | This group has metrics that deal with dns queries made by the application and their response. 
 
+&nbsp;
 
 Remedy group has the following available metrics:
 
@@ -99,6 +100,15 @@ Name | Metric Type | Exposed Information
 ----  | ---- | ---
 `dns_query_count` | Counter | Counts the number of DNS queries made
 `dns_query_response_time` | Histogram | The time it takes to finish dns queries
+
+### Port
+
+The metrics are exposed on the port `9890` of the pod's IP address. The endpoint is `/metrics`. 
+
+A sample call could be done in the following manner:
+```bash
+curl 10.244.0.13:9890/metrics 
+```
 
 ### Visuals
 
