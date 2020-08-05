@@ -1,19 +1,30 @@
 package health
 
 import (
+	"math"
 	"os/exec"
 	"strings"
 	"time"
 
+	"github.com/prometheus/client_golang/prometheus"
 	"github.com/sirupsen/logrus"
 	"k8s.io/client-go/kubernetes"
 )
 
 var (
-	ts            []time.Time // An int slice to hold a fixed number of timestaps when the pods had failed
-	deployment    string      // Name of deployment
-	memFactor     int         // The factor by which to increase memory limit
-	dnsQueryCount float64     // Metric counting the number of time a DNS query was performed.
+	ts         []time.Time // An int slice to hold a fixed number of timestaps when the pods had failed
+	deployment string      // Name of deployment
+	memFactor  int         // The factor by which to increase memory limit
+)
+
+// variables for instrumentation
+var (
+	dnsQueryCount float64 // Metric counting the number of time a DNS query was performed.
+	respTime      = prometheus.NewHistogram(prometheus.HistogramOpts{
+		Name:    "dns_query_response_time",
+		Help:    "The time it takes to finish dns queries",
+		Buckets: prometheus.DefBuckets,
+	}) // prometheus histogram to measure dns res times
 )
 
 // Dig calls the q executable with arg ip
@@ -22,8 +33,16 @@ var (
 func Dig(ip string) (string, error) {
 	// using the k8s service to check DNS availability
 	logrus.Info("IP address being queried: ", ip)
+	before := time.Now()
 	cmd := exec.Command("./q", "@"+ip, "kubernetes.default.svc.cluster.local")
 	out, err := cmd.CombinedOutput()
+	after := time.Now()
+
+	// calculating the time taken to get response
+	duration := float64(after.Nanosecond()-before.Nanosecond()) / math.Pow(10, 6)
+	// adding value to histogram
+	respTime.Observe(duration)
+
 	logrus.Info("Output after executing q: ", string(out))
 
 	if err != nil {
@@ -129,6 +148,6 @@ func DigIPs(client *kubernetes.Clientset, dn string, mf int, remedy bool, IPs ma
 }
 
 // GetDNSMetrics exports metric variables to the collector function
-func GetDNSMetrics() (queries float64) {
-	return dnsQueryCount
+func GetDNSMetrics() (queries float64, respTime *prometheus.Histogram) {
+	return dnsQueryCount, respTime
 }

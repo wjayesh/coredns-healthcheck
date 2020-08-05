@@ -9,17 +9,23 @@ import (
 //prometheus descriptors for each metric
 type DNSCollector struct {
 	dnsQueryCount *prometheus.Desc
+	respTime      *prometheus.Histogram
 }
 
 //NewDNSCollector is a constructor that initializes every descriptor and
 //returns a pointer to the collector
 func NewDNSCollector() *DNSCollector {
+
+	//getting histogram reference
+	_, hist := health.GetDNSMetrics()
+
 	return &DNSCollector{
 		dnsQueryCount: prometheus.NewDesc(
 			"dns_query_count",
 			"Counts the number of DNS queries made",
 			nil, nil,
 		),
+		respTime: hist,
 	}
 }
 
@@ -27,6 +33,7 @@ func NewDNSCollector() *DNSCollector {
 func (collector *DNSCollector) Describe(ch chan<- *prometheus.Desc) {
 
 	//Using a helper to return the Desc from the struct.
+	//checking if histogram's describe is implicitly called
 	prometheus.DescribeByCollect(collector, ch)
 }
 
@@ -34,7 +41,7 @@ func (collector *DNSCollector) Describe(ch chan<- *prometheus.Desc) {
 func (collector *DNSCollector) Collect(ch chan<- prometheus.Metric) {
 
 	//calling func to get metrics from app
-	queryCount := health.GetDNSMetrics()
+	queryCount, _ := health.GetDNSMetrics()
 
 	//Write values to the channel
 	ch <- prometheus.MustNewConstMetric(
@@ -42,4 +49,8 @@ func (collector *DNSCollector) Collect(ch chan<- prometheus.Metric) {
 		prometheus.CounterValue,
 		queryCount,
 	)
+
+	//adding metric to channel ch
+	hist := *collector.respTime
+	hist.Collect(ch)
 }
