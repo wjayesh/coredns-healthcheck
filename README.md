@@ -15,7 +15,7 @@ A binary and packages to perform health checks on pods and services running on K
 
 * [**Workflow**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#workflow)
 
-* [**Prometheus Monitoring**]()
+* [**Prometheus Monitoring**](https://github.com/wjayesh/coredns-healthcheck#prometheus-exporter)
 
 * [**Deployment**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#deployment)
 
@@ -72,7 +72,7 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
   
 ## Prometheus Exporter
 
-A exporter library is implemented at [`pkg/exporter`]() that takes values from the application and registers them with Prometheus using the golang client. 
+A exporter library is implemented at [`pkg/exporter`](https://github.com/wjayesh/coredns-healthcheck/tree/main/pkg/exporter) that takes values from the application and registers them with Prometheus using the golang client. 
 
 The exporter will help determine the number of times the remedies were required, how often the pods failed, the primary reasons for the failures (ascertained by the type of remedy that fixed it) among other things.
 
