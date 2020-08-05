@@ -92,8 +92,8 @@ func startHandler() {
 		// any metrics on the /metrics endpoint.
 
 		http.Handle("/metrics", promhttp.Handler())
-		logrus.Info("Beginning to serve on port :8080")
-		logrus.Fatal(http.ListenAndServe(":8080", nil))
+		logrus.Info("Beginning to serve on port :9890")
+		logrus.Fatal(http.ListenAndServe(":9890", nil))
 	}()
 }
 
