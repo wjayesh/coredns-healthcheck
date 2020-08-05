@@ -52,5 +52,9 @@ func (collector *DNSCollector) Collect(ch chan<- prometheus.Metric) {
 
 	//adding metric to channel ch
 	hist := *collector.respTime
+	//checking for nil pointer
+	if hist == nil {
+		return
+	}
 	hist.Collect(ch)
 }
