@@ -60,11 +60,13 @@ func New(prefs map[string]string) *Engine {
 // Init connects the application to the cluster's api-server
 func (e *Engine) Init(path string) *kubernetes.Clientset {
 
-	// creating an instance of metrics collector
+	// creating instances of metrics collectors
 	remInstance := exporter.NewRemedyCollector()
+	dnsInstance := exporter.NewDNSCollector()
 
 	// registering metrics with prometheus client
 	prometheus.MustRegister(remInstance)
+	prometheus.MustRegister(dnsInstance)
 
 	// helper function to begin listening on a separate goroutine
 	startHandler()
