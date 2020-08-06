@@ -15,6 +15,8 @@ A binary and packages to perform health checks on pods and services running on K
 
 * [**Workflow**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#workflow)
 
+* [**Prometheus Monitoring**](https://github.com/wjayesh/coredns-healthcheck#prometheus-exporter)
+
 * [**Deployment**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#deployment)
 
 * [**Milestones**](https://github.com/WJayesh/coredns-healthcheck/tree/main#milestones-)
@@ -67,6 +69,60 @@ Firstly, the binary queries the CoreDNS pods from the host namespace and checks 
 
   If the service is unavailable from any namespace, the `etc/resolv.conf` file is then inspected to look for possible causes of failure. 
   
+  
+## Prometheus Exporter
+
+A exporter library is implemented at [`pkg/exporter`](https://github.com/wjayesh/coredns-healthcheck/tree/main/pkg/exporter) that takes values from the application and registers them with Prometheus using the golang client. 
+
+The exporter will help determine the number of times the remedies were required, how often the pods failed, the primary reasons for the failures (ascertained by the type of remedy that fixed it) among other things.
+
+### Available Groups Of Data
+
+Name | Description
+-----| ------
+remedy | This group has metrics related to the remedial measures taken when the pods fail, such as restarting pods or increasing memory allocation.
+dns | This group has metrics that deal with dns queries made by the application and their response. 
+
+&nbsp;
+
+Remedy group has the following available metrics:
+
+Name | Metric Type | Exposed Information
+----  | ---- | ---
+`oom_count` | Counter | Counts the number of OOM errors encountered
+`restart_count` | Counter | Counts the number of restarts performed on the pods
+`total_failures` | Counter | Counts the total number of failures of the pods under check
+
+
+DNS group has the following available metrics:
+
+Name | Metric Type | Exposed Information
+----  | ---- | ---
+`dns_query_count` | Counter | Counts the number of DNS queries made
+`dns_query_response_time` | Histogram | The time it takes to finish dns queries
+
+### Port
+
+The metrics are exposed on the port `9890` of the pod's IP address. The endpoint is `/metrics`. 
+
+A sample call could be done in the following manner:
+```bash
+curl 10.244.0.13:9890/metrics 
+```
+
+### Visuals
+
+A sample run with an orchestrated OOM error:
+
+![OOM](https://user-images.githubusercontent.com/37150991/89416485-f10e0100-d74a-11ea-8eeb-07ae7bda3a22.png)
+
+This shows the number of restarts that fixed the pods and the total number of failures. 
+
+![Restarts and Failures](https://user-images.githubusercontent.com/37150991/89416967-afca2100-d74b-11ea-8873-99905b42b57a.png)
+
+
+More visuals will be added as tests proceed.
+
 
 ## Deployment 
 
