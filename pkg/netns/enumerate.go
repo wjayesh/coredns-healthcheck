@@ -16,9 +16,15 @@ func getPIDs(pods *[]v1.Pod) []string {
 	for _, pod := range *pods {
 		containerID := pod.Status.ContainerStatuses[0].ContainerID
 
+		//[debug]
+		logrus.Info("container ID: ", containerID)
+
 		// command to obtain the process id
 		cmd := exec.Command("docker", "inspect", "-f", "'{{.State.Pid}}'", containerID)
 		out, err := cmd.CombinedOutput()
+
+		//[debug]
+		logrus.Info("Output after docker inspect: ", out)
 
 		if err != nil {
 			logrus.Error("Error getting the pid ", err)
