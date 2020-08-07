@@ -162,13 +162,23 @@ func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]stri
 	list := netns.GetNetNS(client)
 	for _, targetNS := range *list {
 		if err := targetNS.Do(func(_ ns.NetNS) error {
+			// inside a net ns
+			logrus.Info("Inside Namespace with path: ", targetNS.Path())
+
 			er := e.firstPhase(client, false, IPs)
 			if er != nil {
+				logrus.Info("Error querying the CoreDNS from namespace with path: ",
+					targetNS.Path())
+				return er
 				// check if etc/namespace exists or not
 				// this is because we can't access it directly as setns doesn't
 				// relocate etc/namespace/.../ to etc/resolv.conf
 			}
+
+			logrus.Info("Successfully queried CoreDNS pods from namespace with path: ",
+				targetNS.Path())
 			return nil
+
 		}); err != nil {
 			logrus.Error("Error performing function inside namespace: ", err)
 		}
