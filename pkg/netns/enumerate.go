@@ -15,6 +15,8 @@ func getPIDs(pods *[]v1.Pod) []string {
 	// find the conatiner id for podname
 	for _, pod := range *pods {
 		containerID := pod.Status.ContainerStatuses[0].ContainerID
+		// taking only 12 digits and excluding "docker://"
+		containerID = containerID[9:21]
 
 		//[debug]
 		logrus.Info("container ID: ", containerID)
