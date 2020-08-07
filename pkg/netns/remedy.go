@@ -7,6 +7,7 @@ import (
 
 	"github.com/containernetworking/plugins/pkg/ns"
 	"github.com/sirupsen/logrus"
+	"k8s.io/client-go/kubernetes"
 )
 
 var (
@@ -14,9 +15,11 @@ var (
 )
 
 // RemedyNS runs a series of checks and fixes DNS unavailibilty from currNS
-func RemedyNS(currNS *ns.NetNS, name string) error {
+func RemedyNS(currNS *ns.NetNS, name string, ns string,
+	client *kubernetes.Clientset) error {
+
 	svcName = name
-	ip := GetServiceIP(svcName)
+	ip := GetServiceIP(svcName, ns, client)
 
 	//first, we check the resolv.conf file to check if resolvers are correct
 	//
