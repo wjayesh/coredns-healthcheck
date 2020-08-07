@@ -186,8 +186,8 @@ spec:
    containers:
    - image: wjayesh/health:latest
      name: health-check-container
-     args: ["-path=PATH", "-allowPods=BOOL", "-udpPort=PORT"]
-     volumeMounts:
+     args: ["-path=PATH", "-allowPods=BOOL", "-port=PORT"]  # fill these values or skip line if deployed 
+     volumeMounts:                                          # on the same cluster as the pods under check
      - mountPath: /hostProc  
        name: proc
      - mountPath: /var/run/docker.sock
