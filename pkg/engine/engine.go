@@ -181,6 +181,8 @@ func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]stri
 
 		}); err != nil {
 			logrus.Error("Error performing function inside namespace: ", err)
+		} else {
+			logrus.Info("Function executed successfully inside namespace")
 		}
 	}
 }
