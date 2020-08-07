@@ -24,7 +24,7 @@ func getPIDs(pods *[]v1.Pod) []string {
 		out, err := cmd.CombinedOutput()
 
 		//[debug]
-		logrus.Info("Output after docker inspect: ", out)
+		logrus.Info("Output after docker inspect: ", string(out))
 
 		if err != nil {
 			logrus.Error("Error getting the pid ", err)
