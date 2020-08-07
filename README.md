@@ -199,7 +199,7 @@ spec:
      securityContext:
        privileged: true   # to run docker command for finding PIDs of containers whose ns to enter
    volumes:
-   - name: proc   # the net ns will be located at /proc/pid/net/ns
+   - name: proc   # the net ns will be located at /proc/pid/ns/net
      hostPath:
        path: /proc     
    - name: docker-sock   # using the docker daemon of the host 
@@ -254,7 +254,7 @@ spec:
         securityContext:
           privileged: true   # to run docker command for finding PIDs of containers whose ns to enter
       volumes:
-      - name: proc   # the net ns will be located at /proc/pid/net/ns
+      - name: proc   # the net ns will be located at /proc/pid/ns/net
         hostPath:
           path: /proc     
       - name: docker-sock   # using the docker daemon of the host 
