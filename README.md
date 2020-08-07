@@ -55,14 +55,35 @@ Inside a node, there exist different pods bound to their respective namespaces. 
 
 ### Workflow
 
-Firstly, the binary queries the CoreDNS pods from the host namespace and checks the response. 
+Firstly, the binary queries the CoreDNS pods from the host network namespace and checks the response. 
 
 * If the response received is unsatisfactory, then the pods are restarted, or the memory limit is increased if restarting doesn't help.
 
-* If the response is correct, the binary proceeds to list all namespaces on the host and starts a session in each, one by one.
+* If the response is correct, the binary proceeds to list all network namespaces on the host and starts a session in each, one by one.
 
   ![Arch. Wf 1](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%201.png)
+  
+  #### Entering a namespace
+  
+  To  accomplish this, we need the PIDs of the container so that the network namespaces can be located on the host's `/proc` directory.
 
+  One way to get the PIDs is to use the following command.
+
+  ```
+  pid = "$(docker inspect -f '{{.State.Pid}}' "container_id")"
+  ```
+
+  This however, requires that the container be able to run docker commands on the host. The way this application approaches this problem is:
+
+  1) Mounting the docker daemon from the host to the container (`/var/run/docker.sock`)
+
+  2) Installing the Docker CLI as part of the Dockerfile. This CLI is necessary to communicate with the daemon. 
+
+  3) Mounting the host's `/proc` directory on the container. This way, we have to the network namespaces corresponding to the different pids. 
+
+
+  We can use the path to the network namespace to obtain a NS object.
+  
   It then queries the CoreDNS pods from every namespace to check the DNS availability.
 
   ![Arch. Wf 2](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%202.png)
