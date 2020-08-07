@@ -59,7 +59,7 @@ func GetNetNS(client *kubernetes.Clientset) *[]ns.NetNS {
 		// obtaining the NetNS object
 		netns, err := ns.GetNS(path)
 		if err != nil {
-			logrus.Error("Error getting NS object")
+			logrus.Error("Error getting NS object: ", err)
 		}
 		list = append(list, netns)
 	}
