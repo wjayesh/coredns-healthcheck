@@ -171,7 +171,7 @@ func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]stri
 					targetNS.Path())
 				logrus.Error("Error: ", er)
 
-				netns.RemedyNS(&targetNS, e.svcName)
+				netns.RemedyNS(&targetNS, e.svcName, e.namespace, e.client)
 				// check if etc/namespace exists or not
 				// this is because we can't access it directly as setns doesn't
 				// relocate etc/namespace/.../ to etc/resolv.conf
