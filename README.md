@@ -162,10 +162,32 @@ metadata:
 spec:
   hostNetwork: true    # to have access to all netns
   dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
-  containers:
-  - name: health-check-container
-    image: wjayesh/health:latest
-    args: ["-path=PATH", "-allowPods=BOOL", "-udpPort=PORT"]
+   containers:
+   - image: wjayesh/health:latest
+     name: health-check-container
+     args: ["-path=PATH", "-allowPods=BOOL", "-udpPort=PORT"]
+     volumeMounts:
+     - mountPath: /hostProc  
+       name: proc
+     - mountPath: /var/run/docker.sock
+       name: docker-sock
+       readOnly: false
+     - mountPath: /var/lib/docker
+       name: docker-directory
+       readOnly: false
+     securityContext:
+       privileged: true   # to run docker command for finding PIDs of containers whose ns to enter
+   volumes:
+   - name: proc   # the net ns will be located at /proc/pid/net/ns
+     hostPath:
+       path: /proc     
+   - name: docker-sock   # using the docker daemon of the host 
+     hostPath:
+       path: "/var/run/docker.sock"
+       type: File
+   - name: docker-directory  # contains all images and other info
+     hostPath:
+       path: "/var/lib/docker"
   restartPolicy: OnFailure
   ```
   
@@ -196,14 +218,38 @@ spec:
       hostNetwork: true
       dnsPolicy: ClusterFirstWithHostNet  # needs to be set explicitly 
       containers:
-      - name: health-check-container
-        image: wjayesh/health:latest
+      - image: wjayesh/health:latest
+        name: health-check-container
         args: ["-path=PATH", "-allowPods=BOOL", "-udpPort=PORT"]
-        restartPolicy: OnFailure
+        volumeMounts:
+        - mountPath: /hostProc  
+          name: proc
+        - mountPath: /var/run/docker.sock
+          name: docker-sock
+          readOnly: false
+        - mountPath: /var/lib/docker
+          name: docker-directory
+          readOnly: false
+        securityContext:
+          privileged: true   # to run docker command for finding PIDs of containers whose ns to enter
+      volumes:
+      - name: proc   # the net ns will be located at /proc/pid/net/ns
+        hostPath:
+          path: /proc     
+      - name: docker-sock   # using the docker daemon of the host 
+        hostPath:
+          path: "/var/run/docker.sock"
+          type: File
+      - name: docker-directory  # contains all images and other info
+        hostPath:
+          path: "/var/lib/docker"
   ```
   
   #### Note 
   * The DNS ploicy needs to be set to `ClusterFirstWithHostNet` explicitly. Reference: https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/#pod-s-dns-policy
+  
+  * To allow the application to access the namespaces (specifically to first get the PIDs used to locate the network ns), it has to be run as a privileged pod.
+  If creation of the pod fails in your cluster, check whether you have a   [`PodSecurityPolicy`](https://kubernetes.io/docs/concepts/policy/pod-security-policy/#privileged) that allows privileged pods. 
   
   * Keep in mind that you cannot use environment variables like `"$(PORT)"` as identifiers inside the args field. 
   This is because there is no shell being run in the container and your variables won't resolve to their values. 
