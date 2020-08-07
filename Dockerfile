@@ -28,6 +28,9 @@ RUN GOOS=linux go build -o q .
 RUN apt-get update
 RUN apt-get install -y curl
 
+# Directory to store docker executable
+WORKDIR /app/cmd/docker/ 
+
 # Installing Docker CLI (not the whole installation)
 ENV DOCKER_VERSION=18.09.4
 RUN curl -sfL -o docker.tgz "https://download.docker.com/linux/static/stable/x86_64/docker-${DOCKER_VERSION}.tgz" && \
