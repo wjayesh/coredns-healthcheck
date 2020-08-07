@@ -82,13 +82,29 @@ Firstly, the binary queries the CoreDNS pods from the host network namespace and
   3) Mounting the host's `/proc` directory on the container. This way, we have to the network namespaces corresponding to the different pids. 
 
 
-  We can use the path to the network namespace to obtain a NS object.
+  We can use the path to the network namespace to obtain an [`NetNS`](https://pkg.go.dev/github.com/containernetworking/plugins/pkg/ns?tab=doc#NetNS) object from the package ns. This object has a function `Do()` that can be used to execute functions inside other namespaces. 
   
-  It then queries the CoreDNS pods from every namespace to check the DNS availability.
+  Thus, the binary now queries the CoreDNS pods from every namespace to check the DNS availability.
 
   ![Arch. Wf 2](https://github.com/wjayesh/coredns-healthcheck/blob/main/assets/docs/images/Arch.%20Wf%202.png)
+  
+  The following is a screenshot from a trial run to test this functionality. We can see that the two pod IPs and one service IPs are queried.
+  The logs serve to show the namespace in which the operations are performed.
+  
+  ![NetNS check](https://user-images.githubusercontent.com/37150991/89679103-0aab7600-d90e-11ea-811f-edd2af28f130.png)
+  
 
-  If the service is unavailable from any namespace, the `etc/resolv.conf` file is then inspected to look for possible causes of failure. 
+  If the service is unavailable from any namespace, then a series of checks are performed:
+  
+  *  `etc/resolv.conf` file is inspected to check if the nameserver is the correct one (corresponding to the DNS service). 
+  
+  &nbsp;
+  
+  Other measures are proposed but not yet implemented. These include:
+  
+  * Checking if the route table has an entry for a `DefaultGateway` and if its the one corresponding to the bridge.
+  * Do virtual interfaces (veth) exist and are they connected to the bridge?
+  * Are `iptables` rules restricting connections?
   
   
 ## Prometheus Exporter
