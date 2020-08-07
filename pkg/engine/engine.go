@@ -169,7 +169,9 @@ func (e *Engine) secondPhase(client *kubernetes.Clientset, IPs map[string][]stri
 			if er != nil {
 				logrus.Info("Error querying the CoreDNS from namespace with path: ",
 					targetNS.Path())
-				return er
+				logrus.Error("Error: ", er)
+
+				netns.RemedyNS(&targetNS, e.svcName)
 				// check if etc/namespace exists or not
 				// this is because we can't access it directly as setns doesn't
 				// relocate etc/namespace/.../ to etc/resolv.conf
