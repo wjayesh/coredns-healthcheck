@@ -52,6 +52,10 @@ func GetNetNS(client *kubernetes.Clientset) *[]ns.NetNS {
 		if pid == "" {
 			continue
 		}
+
+		// removing quotes from pid
+		pid = pid[1 : len(pid)-1]
+
 		// the location for the netns on the node
 		// hostProc is the mount of the proc dir of the host
 		path := "/hostProc/" + pid + "/ns/net"
