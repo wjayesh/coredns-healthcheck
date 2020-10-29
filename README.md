@@ -38,7 +38,7 @@ This project idea aims to get around limitations on Kubernetes’ health check a
 
 
 - Checks CoreDNS health externally through UDP (DNS), from a remote Golang application. 
-- Restart CoreDNS pods by interacting with Kubernetes API through the Golang application, if the response from the cluster and pod IPs is unsatisfactory.  
+- Remedy CoreDNS pods which involves restarting, increasing memory limits, changing network configuration and more, if the response from the cluster and pod IPs is unsatisfactory. This is done by interacting with Kubernetes API through the Golang application.  
 
 Thus, making the state of CoreDNS available externally and reliably is important to ensure important services run as they are expected to.
 
