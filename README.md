@@ -5,6 +5,8 @@
 
 A binary and packages to perform health checks on pods and services running on Kubernetes and to remedy any failures.
 
+*push event*
+
 ## Contents
 
 * [**Objective**](https://github.com/wjayesh/coredns-healthcheck/tree/main/#objective)
